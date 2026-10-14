@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Quantitative Methods with R",
     "section": "",
-    "text": "Welcome! 👋 What Is This Compendium For?\nThis compendium accompanies the course Quantitative Methods with R, which introduces BA students to using R for empirical social science research. No previous knowledge of R is required.\nAcross nine tutorials, we will help you build practical skills for quantitative research:",
+    "text": "Welcome! 👋 What Is This Compendium For?\nThis compendium accompanies the course Quantitative Methods with R, which introduces students to using R for empirical social science research. No previous knowledge of R is required.\nAcross tutorials, we will help you build practical skills for quantitative research:",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Welcome</span>"
     ]
@@ -14,7 +14,7 @@
     "href": "index.html#welcome-what-is-this-compendium-for",
     "title": "Quantitative Methods with R",
     "section": "",
-    "text": "Workflow in R and RStudio\n→ setting up the infrastructure, writing clean code, getting help, working reproducibly\nData management with the tidyverse\n→ importing, filtering, selecting, and transforming social science data\nVisualization & analysis\n→ visualizing data with ggplot2, computing and interpreting descriptive statistics",
+    "text": "Workflow in R and RStudio\n→ setting up the infrastructure, writing clean code, getting help, working reproducibly\nData management & visualization with the tidyverse\n→ importing, transforming, and visualizing social science data\nDescriptive and inferential analysis\n→ computing and interpreting descriptive and inferential statistics (e.g., hierarchical data, regression models)",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Welcome</span>"
     ]
