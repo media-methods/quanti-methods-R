@@ -1,0 +1,254 @@
+---
+title: "9 Descriptive Analysis in R"
+---
+
+::: callout-note
+## 🎯 Learning goals
+
+After working through Tutorial 9, you'll be able to...
+
+-   **understand** basic descriptive statistics (e.g., mean, standard deviation)
+-   **apply** functions for descriptive analysis
+:::
+
+## Descriptive statistics
+
+Let's start with simple descriptive statistics on our data. Descriptive statistics include measures of frequency, central tendency, and spread — we'll look at each in turn. For descriptive statistics, we will mainly use three functions from the `tidycomm` package:
+
+-   `tab_frequencies()`: absolute and relative frequencies (for variables scaled on at least a nominal level)
+-   `describe_cat()`: mode (for categorical variables, i.e., scaled on at least a nominal level)
+-   `describe()`: mean, median, standard deviation (for variables scaled on a metric level)
+
+We will once again use the `WoJ` dataset. It contains a quantitative survey of N = 1,200 journalists from five countries, collected via the World of Journalism study. The data is provided via the [`tidycomm`](https://cran.r-project.org/web/packages/tidycomm/index.html) package developed by Unkel et al.
+
+First, we retrieve the data and save it as an object named `data_woj`. Next, we use the `as_tibble()` command which essentially prints our data in a nicer format. The data does not change, we just get additional information (such as the type of data it contains).
+
+Make sure to have the `tidycomm` and the `tidyverse` package installed before running this command!
+
+```{r woj-load, eval= TRUE, echo=TRUE, warning=FALSE, message=FALSE}
+# we load the necessary packages
+library(tidycomm)
+library(tidyverse)
+
+# loads the WoJ dataset shipped with tidycomm
+data_woj <- tidycomm::WoJ
+
+# we inspect the data
+data_woj |>
+  as_tibble()
+```
+
+## Frequency measures
+
+Frequency measures tell us how often values occur in our data. They do not describe the center of a distribution, but give us a sense of how values are distributed across categories.
+
+### Absolute values/counts
+
+For many variables - especially those with nominal or ordinal scale levels - you may want to count values. For instance, you may want to know how many participants are included in our data using the `tab_frequencies()` function. In the output below, the column `n` shows that *N* = 1,200 participants were part of the study.
+
+```{r counts, eval = TRUE, echo = TRUE, warning = FALSE}
+data_woj |>
+  tab_frequencies()
+```
+
+Or you may want to know how many participants from each country took part in this study - i.e., descriptive statistics for a specific variable rather than the whole data set. In the output below, the column `n` shows that *N* = 207 journalists from Austria participated in this study.
+
+```{r counts-2, eval = TRUE, echo = TRUE, warning = FALSE}
+data_woj |>
+  tab_frequencies(country)
+```
+
+### Percentages
+
+Sometimes, it may be more helpful to not know how often a specific value occurs in absolute, but in relative terms, for example in percentages. To calculate this, we can use the same command as before, but focus on the column `percent` (which shows proportions, i.e., 0.172 = 17.2%) - for example, to understand how often participants from different countries participated in our survey. We can, for example, see that 17.2% of participants were from Austria.
+
+```{r perc, eval = TRUE, echo = TRUE}
+data_woj |>
+  tab_frequencies(country)
+```
+
+## Central tendencies
+
+Measures of central tendency describe the "typical" or most representative value in a distribution. The three most common measures are the mode, the median, and the mean.
+
+### Mode
+
+The mode is the value that appears most frequently in your data. It is the only measure of central tendency that can be used with nominal-level variables. To identify the mode, for example for the variable `country`, we can use the `describe_cat()` function and focus on the column `Mode`. In the output below, the column `Mode` shows that most participants in the survey were from Denmark. According to the column `Mode_N`, *N* = 376 participants from Denmark participated.
+
+```{r mode, eval = TRUE, echo = TRUE}
+data_woj |>
+  describe_cat(country)
+```
+
+### Median
+
+The median is the value that divides a distribution exactly in half: 50% of values fall below it and 50% above. It is particularly useful because, unlike the mean, it is robust against extreme values (outliers).
+
+To calculate the median, we use the `describe()` function and focus on the column `Mdn`. In the output below, we apply it to the variable `trust_government`, which measures how much trust journalists place in the government on a scale from 1 (no trust at all) to 5 (complete trust).
+
+```{r median, eval = TRUE, echo = TRUE, warning = FALSE}
+data_woj |>
+  describe(trust_government)
+```
+
+We can see in the column `Mdn` that the median value for trust in government is 3. This means that at least half of the journalists in our survey rated their trust in the government at 3 or below on the scale.
+
+### Mean
+
+The mean (or arithmetic mean) is the most commonly used measure of central tendency for metric variables. It is calculated by summing all values and dividing by the number of observations. We again use the `describe()` function, this time focusing on the column `M`.
+
+```{r mean, eval = TRUE, echo = TRUE, warning = FALSE}
+data_woj |>
+  describe(trust_government)
+```
+
+The column `M` tells us that journalists' average trust in government is 2.82 — slightly below the midpoint of the scale. Keep in mind that the mean is sensitive to outliers — a few very high or very low values can pull it noticeably in one direction. This is why comparing the mean and the median is often a useful first step in understanding a variable's distribution. How much values vary around the mean is something we will discuss next.
+
+## Measures of dispersion
+
+While measures of central tendency tell us about the typical value in a distribution, measures of dispersion tell us how much values vary around that center. Two of the most common measures of dispersion are the variance and the standard deviation.
+
+### Variance
+
+The variance describes how much the individual values in a distribution spread around the mean. A high variance indicates that values are spread widely; a low variance indicates that they cluster closely around the mean. While variance is an important theoretical concept, it is expressed in *squared* units of the original variable, which makes it harder to interpret directly.
+
+The `tidycomm` package does not directly depict the variance - we have to create it using the standard deviation (see next section):
+
+```{r variance, eval = TRUE, echo = TRUE, warning = FALSE}
+data_woj |>
+  describe(trust_government) |>
+  mutate(variance = SD^2) |>
+  select(variance)
+```
+
+This gives us the variance of journalists' trust in government scores. Because the unit is squared, we typically move on to the standard deviation (see below) for a more interpretable measure of spread.
+
+### Standard deviation
+
+The standard deviation is simply the square root of the variance. This brings the measure of spread back into the same unit as the original variable, making it much easier to interpret. We use the `describe()` function and focus on the column `SD`.
+
+```{r sd, eval = TRUE, echo = TRUE, warning = FALSE}
+data_woj |>
+  describe(trust_government)
+```
+
+For the variable `trust_government`, the standard deviation is 0.854, meaning that on average, journalists' responses deviated from the mean by about 0.85 points on the 5-point scale.
+
+The column `SD` tells us the average deviation of journalists' trust in government scores from the mean. Together, the mean and standard deviation give a compact summary of both the typical value in the distribution and how much individual responses vary around it.
+
+## Descriptive statistics across groups
+
+In some cases, you may also wish to get descriptive data for groups within our data. For instance, we may want to know how trust in government varies **across** different countries in our sample.
+
+Using the `dplyr` package, we use the following code to get this information:
+
+-   We define the object to which functions should be applied: `data_woj`
+-   We group our data alongside the variable `country`
+-   We calculate descriptive statistics for `trust_government` across values of `country`
+
+```{r grouped, eval = TRUE, echo = TRUE}
+data_woj |>
+  group_by(country) |>
+  describe(trust_government)
+```
+
+Results allow us to compare how journalists in different countries rate their trust in government. For example, we can see that journalists' trust in their government is highest in Switzerland (*M* = 3.35, *SD* = 0.73) and lowest in Denmark (*M* = 2.55, *SD* = 0.79).
+
+Keep in mind that these are descriptive differences — we would need inferential statistics (e.g., significance tests) to determine whether any observed differences are statistically meaningful.
+
+## 🤓 Smart Hacks
+
+::: {.callout-tip collapse="true"}
+## Smart Hack: Automated descriptive reporting with the `report` package
+
+The [`report`](https://easystats.github.io/report/) package, part of the [`easystats`](https://easystats.github.io/easystats/) ecosystem, can automatically generate descriptive statistics — and even write them up as readable text — with just one function call. The [`knitr`](https://cran.r-project.org/web/packages/knitr/index.html) package enables us to nicely print the output.
+
+```{r smarthack-report-install, eval = FALSE, echo = TRUE}
+install.packages("report")
+install.packages("knitr")
+```
+
+The `report()` function reads your data and produces a formatted, human-readable description of the key statistics — including the mean, standard deviation, median, and the percentage of missing values. This is especially handy for quickly writing up a results section. Here, we convert the report into a readable and nicely formatted table using `as.data.frame()` and `kable()`:
+
+```{r smarthack-report-table, eval = TRUE, echo = TRUE, warning = FALSE, message = FALSE}
+library(report)
+library(knitr)
+
+data_woj |>
+  select(trust_government) |>
+  report() |>
+  as.data.frame() |>
+  kable(caption = "Automated descriptive statistics via the report package",
+        digits = 2)
+```
+
+**Important**: The `report` package produces more columns than you may need (e.g., skewness, kurtosis, CI bounds). You can always add a `select()` step before `kable()` to keep only the most relevant ones.
+:::
+
+## 💡 Take-Aways
+
+-   **Frequency measures** (e.g., count, percentage): `tab_frequencies()`
+-   **Central tendency: Mode**: `describe_cat()`
+-   **Other central tendencies** (e.g., mean) and **measures of dispersion** (e.g., standard deviation): `describe()`
+-   **Descriptive statistics by group**: `group_by()`
+-   **Automated reporting**: `report()`
+-   **Table formatting**: `kable()`
+
+## 🎲 Quiz
+
+::::: {.content-visible when-format="html"}
+{{< include "files/www/quiz_script.qmd" >}}
+
+::: {.callout-note icon="false"}
+## 🎲 Question 1
+
+**Which of the following statements about measures of central tendency are correct?**
+
+```{ojs}
+//| echo: false
+
+MC_desc_1 = [
+  ["The mean, median, and mode are all measures of central tendency.", "True"],
+  ["Counts and percentages are measures of central tendency.", "False"],
+  ["The mode is the only measure of central tendency that can be used with nominal-level variables.", "True"],
+  ["The median is more sensitive to outliers than the mean.", "False"]
+]
+
+viewof answers_desc_1 = quizInput({
+  questions: MC_desc_1,
+  options: ["True", "False"]
+})
+```
+:::
+
+::: {.callout-note icon="false"}
+## 🎲 Question 2
+
+**Which of the following statements about the `tidycomm` functions are correct?**
+
+```{ojs}
+//| echo: false
+
+MC_desc_3 = [
+  ["The describe() function can be used to calculate the mean and standard deviation.", "True"],
+  ["The tab_frequencies() function is used to calculate the mode.", "False"],
+  ["Differences in group means are sufficient to conclude that groups are statistically significantly different.", "False"],
+  ["The describe() function requires variables to be measured on a metric level.", "True"]
+]
+
+viewof answers_desc_3 = quizInput({
+  questions: MC_desc_3,
+  options: ["True", "False"]
+})
+```
+:::
+:::::
+
+## 📚 More tutorials on this
+
+You still have questions? The following tutorials & papers can help you with that:
+
+-   [Discovering Statistics Using R by A. Field, J. Miles, & Z. Field](https://profandyfield.com/discoverse/dsur/)
+-   [APA guidelines for reporting statistics](https://apastyle.apa.org/instructional-aids/numbers-statistics-guide.pdf)
+-   [Datenanalyse am Ifkw by L. Kobilke et al.](https://datenanalyse.ifkw.lmu.de/)
+-   [Datenanalyse mit R by M. Scharkow](https://stats.ifp.uni-mainz.de/ba-datenanalyse/deskriptive-statistik.html)

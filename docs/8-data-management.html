@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Valerie Hase">
+<meta name="description" content="Data cleaning, management, analysis, and reporting with R">
+
+<title>8 Data management in R – Quantitative Methods with R</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./80-appendix.html" rel="next">
+<link href="./7-visuals.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-11f3c4d3876d633e5b7b3276b3b6b9df.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="files/www/custom.css">
+<link rel="stylesheet" href="ache-refresh">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./6-data-types.html">Handling data in R</a></li><li class="breadcrumb-item"><a href="./8-data-management.html"><span class="chapter-title">8 Data management in R</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Quantitative Methods with R</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">R Basics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1-install-r.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 Install R/R Studio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2-overview.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 What to do where in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3-workflow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 Workflow in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./4-coding-style.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 Good coding practice</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5-the-tidyverse.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 The tidyverse</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Handling data in R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./6-data-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 Data and object types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./7-visuals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 Creating visuals with ggplot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./8-data-management.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">8 Data management in R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Statistics in R</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./80-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Appendix</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./81-glossary.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">🟢 Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./83-faq-r.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">🟢 FAQ R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./imprint.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Legal Notice / Contact</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Content</h2>
+   
+  <ul>
+  <li><a href="#getting-data-into-r" id="toc-getting-data-into-r" class="nav-link active" data-scroll-target="#getting-data-into-r">1. Getting data into R</a></li>
+  <li><a href="#understanding-data-in-r" id="toc-understanding-data-in-r" class="nav-link" data-scroll-target="#understanding-data-in-r">2. Understanding data in R</a></li>
+  <li><a href="#renaming-variables" id="toc-renaming-variables" class="nav-link" data-scroll-target="#renaming-variables">3. Renaming variables</a></li>
+  <li><a href="#transforming-data" id="toc-transforming-data" class="nav-link" data-scroll-target="#transforming-data">4. Transforming data</a>
+  <ul class="collapse">
+  <li><a href="#handling-missing-values" id="toc-handling-missing-values" class="nav-link" data-scroll-target="#handling-missing-values">4.1 Handling missing values</a></li>
+  <li><a href="#recoding-variables" id="toc-recoding-variables" class="nav-link" data-scroll-target="#recoding-variables">4.2 Recoding variables</a></li>
+  <li><a href="#building-indices" id="toc-building-indices" class="nav-link" data-scroll-target="#building-indices">4.3 Building indices</a></li>
+  </ul></li>
+  <li><a href="#smart-hacks" id="toc-smart-hacks" class="nav-link" data-scroll-target="#smart-hacks">🤓 Smart Hacks</a></li>
+  <li><a href="#take-aways" id="toc-take-aways" class="nav-link" data-scroll-target="#take-aways">💡 Take-Aways</a></li>
+  <li><a href="#quiz" id="toc-quiz" class="nav-link" data-scroll-target="#quiz">🎲 Quiz</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./6-data-types.html">Handling data in R</a></li><li class="breadcrumb-item"><a href="./8-data-management.html"><span class="chapter-title">8 Data management in R</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">8 Data management in R</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>🎯 Learning goals
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>After working through Tutorial 8, you’ll be able to…</p>
+<ul>
+<li><strong>apply</strong> functions for data import and export to get data into and out of R</li>
+<li><strong>apply</strong> functions for data transformation</li>
+</ul>
+</div>
+</div>
+<section id="getting-data-into-r" class="level2">
+<h2 class="anchored" data-anchor-id="getting-data-into-r">1. Getting data into R</h2>
+<p>Oftentimes, you may want to import data from outside of R into R (e.g., an Excel file, a PDF, an image, etc.).</p>
+<p>R provides functions for importing and exporting almost any file format. However, in statistical analysis, <strong>tabular data</strong> has long been the standard structure. In tabular data, information is organized in <strong>rows and columns</strong>: each row typically represents an observation (for example, a survey respondent) and each column represents a variable (for example, age, gender, or income). Columns may contain different <strong>data types</strong>, such as numeric, character (text), or logical values.</p>
+<p>Common tabular file formats include:</p>
+<ul>
+<li>CSV (comma-separated values): <code>.csv</code></li>
+<li>TSV (tab-separated values): <code>.tsv</code></li>
+<li>Text files with separators: <code>.txt</code></li>
+<li>Excel spreadsheets: <code>.xlsx</code></li>
+<li>SPSS datasets: <code>.sav</code></li>
+</ul>
+<p>To import different file formats, the <code>tidyverse</code> provides a consistent family of functions.</p>
+<p>These functions follow the same naming convention: the prefix <code>read_</code> followed by the file format, such as <code>csv</code> or <code>tsv</code>. For example, <code>read_csv()</code> reads comma-separated files, while <code>read_tsv()</code> reads tab-separated files.</p>
+<p>Examples for related functions include:</p>
+<ul>
+<li><code>read_csv()</code> for CSV files<br>
+</li>
+<li><code>read_tsv()</code> for tab-separated files<br>
+</li>
+<li><code>read_delim()</code> for custom separators<br>
+</li>
+<li><code>read_table()</code> for general text tables</li>
+</ul>
+<p>In most cases, the <code>read_</code> functions only require the <strong>file path</strong> as an argument, written in quotation marks. If the file is located in a subfolder, the folder name is written before the file name, separated by a <code>/</code>. The output of the function must then be stored in an object.</p>
+<p>As an example, download the World of Journalism data set provided by the <code>tidycomm</code> package here: 📢 <a href="data/data_woj.csv">Example data</a>.</p>
+<p><strong>Make sure</strong> to store this in the subfolder <strong>data</strong> in your R project. Otherwise, the following commands will not work!</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="ot">&lt;-</span> <span class="fu">read_csv2</span>(<span class="st">"data/data_woj.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>In this example, <code>"data/data_woj.csv"</code> refers to a file called <code>data_woj.csv</code> that is located inside the folder <code>data</code>. The imported dataset is stored in the object <code>data_woj_new</code>.</p>
+</section>
+<section id="understanding-data-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="understanding-data-in-r">2. Understanding data in R</h2>
+<p>After loading a dataset into R, the next step is usually to <strong>inspect its structure and contents</strong>. This helps us understand what variables are available, what data types they have, and whether the dataset looks as expected. In the tidyverse workflow, several simple functions help us quickly explore a dataset.</p>
+<p>To display the dataset in the console, we can simply type the object name. If the dataset is large, R will only print the first rows and columns.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_woj_new</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,200 × 15
+   country   reach employment temp_contract autonomy_selection autonomy_emphasis
+   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;                      &lt;dbl&gt;             &lt;dbl&gt;
+ 1 Germany   Nati… Full-time  Permanent                      5                 4
+ 2 Germany   Nati… Full-time  Permanent                      3                 4
+ 3 Switzerl… Regi… Full-time  Permanent                      4                 4
+ 4 Switzerl… Local Part-time  Permanent                      4                 5
+ 5 Austria   Nati… Part-time  Permanent                      4                 4
+ 6 Switzerl… Local Freelancer &lt;NA&gt;                           4                 4
+ 7 Germany   Local Full-time  Permanent                      4                 4
+ 8 Denmark   Nati… Full-time  Permanent                      3                 3
+ 9 Switzerl… Local Full-time  Permanent                      5                 5
+10 Denmark   Nati… Full-time  Permanent                      2                 4
+# ℹ 1,190 more rows
+# ℹ 9 more variables: ethics_1 &lt;dbl&gt;, ethics_2 &lt;dbl&gt;, ethics_3 &lt;dbl&gt;,
+#   ethics_4 &lt;dbl&gt;, work_experience &lt;dbl&gt;, trust_parliament &lt;dbl&gt;,
+#   trust_government &lt;dbl&gt;, trust_parties &lt;dbl&gt;, trust_politicians &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Another convenient way to look at the first observations is the function <code>head()</code>, which shows the first six rows of a dataset.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_woj_new)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 15
+  country    reach employment temp_contract autonomy_selection autonomy_emphasis
+  &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;                      &lt;dbl&gt;             &lt;dbl&gt;
+1 Germany    Nati… Full-time  Permanent                      5                 4
+2 Germany    Nati… Full-time  Permanent                      3                 4
+3 Switzerla… Regi… Full-time  Permanent                      4                 4
+4 Switzerla… Local Part-time  Permanent                      4                 5
+5 Austria    Nati… Part-time  Permanent                      4                 4
+6 Switzerla… Local Freelancer &lt;NA&gt;                           4                 4
+# ℹ 9 more variables: ethics_1 &lt;dbl&gt;, ethics_2 &lt;dbl&gt;, ethics_3 &lt;dbl&gt;,
+#   ethics_4 &lt;dbl&gt;, work_experience &lt;dbl&gt;, trust_parliament &lt;dbl&gt;,
+#   trust_government &lt;dbl&gt;, trust_parties &lt;dbl&gt;, trust_politicians &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>To understand the <strong>variables and their data types</strong>, we can use <code>glimpse()</code> from the tidyverse. This function provides a compact overview of the dataset, including variable names, types, and example values.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(data_woj_new)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,200
+Columns: 15
+$ country            &lt;chr&gt; "Germany", "Germany", "Switzerland", "Switzerland",…
+$ reach              &lt;chr&gt; "National", "National", "Regional", "Local", "Natio…
+$ employment         &lt;chr&gt; "Full-time", "Full-time", "Full-time", "Part-time",…
+$ temp_contract      &lt;chr&gt; "Permanent", "Permanent", "Permanent", "Permanent",…
+$ autonomy_selection &lt;dbl&gt; 5, 3, 4, 4, 4, 4, 4, 3, 5, 2, 5, 4, 3, 4, 3, 5, 4, …
+$ autonomy_emphasis  &lt;dbl&gt; 4, 4, 4, 5, 4, 4, 4, 3, 5, 4, 5, 4, 4, 5, 3, 5, 4, …
+$ ethics_1           &lt;dbl&gt; 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 3, 1, …
+$ ethics_2           &lt;dbl&gt; 3, 2, 4, 3, 3, 4, 3, 4, 2, 4, 1, 4, 2, 4, 4, 4, 4, …
+$ ethics_3           &lt;dbl&gt; 2, 2, 2, 1, 2, 4, 2, 4, 1, 4, 2, 2, 4, 4, 4, 3, 2, …
+$ ethics_4           &lt;dbl&gt; 1, 1, 1, 2, 1, 3, 2, 4, 3, 4, 1, 4, 2, 4, 4, 3, 3, …
+$ work_experience    &lt;dbl&gt; 10, 7, 6, 7, 15, 27, 24, 11, 25, 4, 8, 25, 10, 5, 2…
+$ trust_parliament   &lt;dbl&gt; 3, 4, 4, 4, 3, 4, 2, 4, 1, 3, 3, 3, 3, 3, 3, 4, 2, …
+$ trust_government   &lt;dbl&gt; 3, 4, 4, 4, 2, 4, 1, 3, 1, 3, 2, 3, 2, 2, 2, 2, 3, …
+$ trust_parties      &lt;dbl&gt; 3, 3, 3, 3, 2, 3, 3, 3, 1, 3, 2, 3, 2, 2, 2, 3, 2, …
+$ trust_politicians  &lt;dbl&gt; 3, 3, 3, 3, 2, 2, 2, 3, 1, 3, 2, 3, 2, 2, 1, 3, 2, …</code></pre>
+</div>
+</div>
+<p>It is often useful to know how many <strong>observations (rows)</strong> and <strong>variables (columns)</strong> the dataset contains.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rows</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(data_woj_new)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1200</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Columns</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(data_woj_new)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+</div>
+</section>
+<section id="renaming-variables" class="level2">
+<h2 class="anchored" data-anchor-id="renaming-variables">3. Renaming variables</h2>
+<p>When working with datasets, it is often useful to <strong>rename variables</strong>. Variable names in raw datasets may be unclear or inconsistent. Renaming variables can make the dataset easier to read and work with during analysis.</p>
+<p>In the tidyverse, variables can be renamed using the function <code>rename()</code>. The basic logic is:</p>
+<p><code>rename(new_name = old_name)</code></p>
+<p>This means that the new variable name is written on the left and the existing variable name on the right.</p>
+<p>For example, suppose we want to rename the variable <code>country</code> in the dataset <code>data_woj_new</code> to <code>respondent_country</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="ot">&lt;-</span> data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">respondent_country =</span> country)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check result</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 15
+  respondent_country reach    employment temp_contract autonomy_selection
+  &lt;chr&gt;              &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                      &lt;dbl&gt;
+1 Germany            National Full-time  Permanent                      5
+2 Germany            National Full-time  Permanent                      3
+3 Switzerland        Regional Full-time  Permanent                      4
+4 Switzerland        Local    Part-time  Permanent                      4
+5 Austria            National Part-time  Permanent                      4
+6 Switzerland        Local    Freelancer &lt;NA&gt;                           4
+# ℹ 10 more variables: autonomy_emphasis &lt;dbl&gt;, ethics_1 &lt;dbl&gt;, ethics_2 &lt;dbl&gt;,
+#   ethics_3 &lt;dbl&gt;, ethics_4 &lt;dbl&gt;, work_experience &lt;dbl&gt;,
+#   trust_parliament &lt;dbl&gt;, trust_government &lt;dbl&gt;, trust_parties &lt;dbl&gt;,
+#   trust_politicians &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>The result is assigned back to the dataset <code>data_woj_new</code>, so that the change is stored.</p>
+</section>
+<section id="transforming-data" class="level2">
+<h2 class="anchored" data-anchor-id="transforming-data">4. Transforming data</h2>
+<section id="handling-missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="handling-missing-values">4.1 Handling missing values</h3>
+<p><strong>Important</strong>: You have already learned how to define missing values - see Tutorial 6. For repetition, this is how we would set specific values to missing (here the values for “Freelancers”):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Redefine missing values</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="ot">&lt;-</span> data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">employment =</span> <span class="fu">na_if</span>(employment, <span class="st">"Freelancer"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="recoding-variables" class="level3">
+<h3 class="anchored" data-anchor-id="recoding-variables">4.2 Recoding variables</h3>
+<p><strong>Important</strong>: You have already learned how to recode variables - see Tutorial 5. For repetition, a tidyverse-style approach for recoding is to combine <code>mutate()</code> with:</p>
+<ul>
+<li><code>if_else()</code> for simple two-category recodes</li>
+<li><code>case_when()</code> for multiple conditions/categories</li>
+</ul>
+<p>For example, we can create a new, categorical variable <code>work_experience_cat</code> that describes whether respondents have 5, 10 or more years of work experience. Note that we use the <code>%in%</code> operator to define whether <code>work_experience</code> takes on a specific value (e.g., <code>1:5</code>, meaning 1, 2, 3, 4, or 5). All other values (here: respondents with missing values) are set to <code>NA</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="ot">&lt;-</span> data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">work_experience_cat =</span> <span class="fu">case_when</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>      work_experience <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span> <span class="sc">~</span> <span class="st">"max. 5 years"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>      work_experience <span class="sc">%in%</span> <span class="dv">6</span><span class="sc">:</span><span class="dv">10</span> <span class="sc">~</span> <span class="st">"6 to 10 years"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      work_experience <span class="sc">&gt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">"more than 10 years"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span>))</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check result</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(work_experience, work_experience_cat) <span class="sc">|&gt;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  work_experience work_experience_cat
+            &lt;dbl&gt; &lt;chr&gt;              
+1              10 6 to 10 years      
+2               7 6 to 10 years      
+3               6 6 to 10 years      
+4               7 6 to 10 years      
+5              15 more than 10 years 
+6              27 more than 10 years </code></pre>
+</div>
+</div>
+</section>
+<section id="building-indices" class="level3">
+<h3 class="anchored" data-anchor-id="building-indices">4.3 Building indices</h3>
+<p>In many social science datasets, several variables measure different aspects of the same concept. For example, multiple survey questions may capture attitudes toward a topic such as ethical concerns. In such cases, it is often useful to combine these variables into a single index.</p>
+<p>A common approach is to create a mean index. A <strong>mean index</strong> combines multiple variables that measure the same concept by calculating the mean value across them.</p>
+<p>In <code>data_woj_new</code>, the variables <code>ethics_1</code> to <code>ethics_4</code> measure the degree to which journalists agree with ethical statements. How could we combine these to a mean index?</p>
+<p>The <code>tidycomm</code> package provides convenient functions to create indices directly within a tidyverse workflow. The function <code>add_index()</code> calculates an index from a set of variables and adds it to the dataset.</p>
+<p>The basic logic is:</p>
+<p><code>add_index(new_index_name, variable_1, variable_2, variable_3, ...)</code></p>
+<p>For agreement related to ethical statements, a mean index can be created as follows.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidycomm"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="ot">&lt;-</span> data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_index</span>(ethical_concerns, ethics_1, ethics_2, ethics_3, ethics_4)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># check result</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"ethic"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  ethics_1 ethics_2 ethics_3 ethics_4 ethical_concerns
+     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;
+1        2        3        2        1             2   
+2        1        2        2        1             1.5 
+3        2        4        2        1             2.25
+4        1        3        1        2             1.75
+5        2        3        2        1             2   
+6        2        4        4        3             3.25</code></pre>
+</div>
+</div>
+<p>In this example, the variables <code>ethics_1</code> to <code>ethics_4</code> are averaged, and the resulting index is stored in a new variable called <code>ethical_concerns</code>. By assigning the result back to <code>data_woj_new</code>, the index becomes part of the dataset and can be used in further analyses.</p>
+<p>By default, <code>add_index()</code> calculates a mean index. If a sum index is desired instead, the argument <code>type = "sum"</code> can be added.</p>
+<p>Before using this index, it is often useful to check its <strong>reliability</strong>, which refers to the internal consistency of the indicators. In other words, reliability measures how strongly the items in an index are related to each other.</p>
+<p>A common measure of reliability is <strong>Cronbach’s α (alpha)</strong>. Higher values indicate stronger internal consistency among the items.</p>
+<p>As a rule of thumb:</p>
+<ul>
+<li><strong>α &gt; 0.7</strong> is usually considered acceptable</li>
+<li><strong>α &gt; 0.8</strong> indicates good reliability</li>
+</ul>
+<p>The tidycomm function <code>get_reliability()</code> calculates reliability statistics:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data_woj_new <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_reliability</span>(ethical_concerns)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  Index            Index_of                              M    SD Cronbachs_Alpha
+* &lt;chr&gt;            &lt;chr&gt;                             &lt;dbl&gt; &lt;dbl&gt;           &lt;dbl&gt;
+1 ethical_concerns ethics_1, ethics_2, ethics_3, et…  2.45 0.777           0.612</code></pre>
+</div>
+</div>
+<p>The output provides Cronbach’s α along with descriptive information about the index and the variables included in it. In this case, Cronbach’s α is 0.61 and thus below 0.7, so we would conclude that the index is not reliable and we should not use it for further analysis.</p>
+</section>
+</section>
+<section id="smart-hacks" class="level2">
+<h2 class="anchored" data-anchor-id="smart-hacks">🤓 Smart Hacks</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Smart Hack: CSV vs.&nbsp;CSV2 ?!
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are two common types of CSV files that differ in how they represent <strong>column separators and decimal marks</strong>.</p>
+<p>In the <strong>US-style format</strong>, columns are separated by <strong>commas</strong> and decimals use a <strong>dot</strong>. In many <strong>European formats</strong>, however, decimals use a <strong>comma</strong>, so columns are separated by <strong>semicolons</strong> instead.</p>
+<p>Because of this difference, CSV files do not always load correctly on the first try. The tidyverse therefore provides two functions:</p>
+<ul>
+<li><code>read_csv()</code> for US-style CSV files</li>
+<li><code>read_csv2()</code> for European-style CSV files</li>
+</ul>
+<p>The same distinction applies when saving CSV files. If a file is intended to be opened in a European version of Excel, <code>write_csv2()</code> is usually the safer choice. Just try and see what works!</p>
+</div>
+</div>
+</div>
+</section>
+<section id="take-aways" class="level2">
+<h2 class="anchored" data-anchor-id="take-aways">💡 Take-Aways</h2>
+<ul>
+<li><strong>import</strong> tabular data: <code>read_csv()</code>, <code>read_csv2()</code></li>
+<li><strong>inspect</strong> datasets: <code>head()</code>, <code>glimpse()</code>, <code>nrow()</code>, <code>ncol()</code></li>
+<li><strong>rename</strong> variables: <code>rename()</code></li>
+<li><strong>handle</strong> missing values: <code>na_if()</code></li>
+<li><strong>recode</strong> variables: <code>mutate()</code>, <code>if_else()</code>, <code>case_when()</code></li>
+<li><strong>build</strong> indices from multiple items: <code>add_index()</code></li>
+<li><strong>check</strong> index reliability: <code>get_reliability()</code></li>
+</ul>
+</section>
+<section id="quiz" class="level2">
+<h2 class="anchored" data-anchor-id="quiz">🎲 Quiz</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb21" data-startfrom="232" data-source-offset="-1"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 231;"><span id="cb21-232"><a href="#cb21-232" aria-hidden="true" tabindex="-1"></a>round <span class="op">=</span> (n<span class="op">,</span> places) <span class="kw">=&gt;</span> {</span>
+<span id="cb21-233"><a href="#cb21-233" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>places) <span class="cf">return</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(n)<span class="op">;</span></span>
+<span id="cb21-234"><a href="#cb21-234" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> d <span class="op">=</span> <span class="dv">10</span> <span class="op">**</span> places<span class="op">;</span></span>
+<span id="cb21-235"><a href="#cb21-235" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(n <span class="op">*</span> d) <span class="op">/</span> d<span class="op">;</span></span>
+<span id="cb21-236"><a href="#cb21-236" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-237"><a href="#cb21-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-238"><a href="#cb21-238" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">textReplacementWithText</span>({ text<span class="op">,</span> placeholder<span class="op">,</span> correctText<span class="op">,</span> fontFamily <span class="op">=</span> <span class="st">"monospace"</span><span class="op">,</span> color <span class="op">=</span> <span class="st">"#000000"</span> }) {</span>
+<span id="cb21-239"><a href="#cb21-239" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> parts <span class="op">=</span> text<span class="op">.</span><span class="fu">split</span>(<span class="ss">/</span><span class="sc">\{\{</span><span class="ss">input</span><span class="sc">\}\}</span><span class="ss">/</span>)<span class="op">;</span> <span class="co">// Teilt den Text an den Eingabestellen</span></span>
+<span id="cb21-240"><a href="#cb21-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-241"><a href="#cb21-241" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-size: HUGE; margin-top: -40; margin-bottom: -40; margin-left: -50px; line-height: 1.8; font-family: </span><span class="sc">${</span>fontFamily<span class="sc">}</span><span class="vs">; color: </span><span class="sc">${</span>color<span class="sc">}</span><span class="vs">; white-space: pre-wrap; text-indent: 0; display: flex; align-items: baseline;"&gt;</span></span>
+<span id="cb21-242"><a href="#cb21-242" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="flex: 1;"&gt;</span></span>
+<span id="cb21-243"><a href="#cb21-243" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>parts<span class="op">.</span><span class="fu">map</span>((part<span class="op">,</span> index) <span class="kw">=&gt;</span></span>
+<span id="cb21-244"><a href="#cb21-244" aria-hidden="true" tabindex="-1"></a>        htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span><span class="sc">${</span>part<span class="sc">}${</span>index <span class="op">&lt;</span> parts<span class="op">.</span><span class="at">length</span> <span class="op">-</span> <span class="dv">1</span> <span class="op">?</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;span style="display: inline-flex; align-items: baseline;"&gt;</span></span>
+<span id="cb21-245"><a href="#cb21-245" aria-hidden="true" tabindex="-1"></a><span class="vs">          &lt;input </span></span>
+<span id="cb21-246"><a href="#cb21-246" aria-hidden="true" tabindex="-1"></a><span class="vs">            type="text"</span></span>
+<span id="cb21-247"><a href="#cb21-247" aria-hidden="true" tabindex="-1"></a><span class="vs">            placeholder="</span><span class="sc">${</span>placeholder<span class="sc">}</span><span class="vs">"</span></span>
+<span id="cb21-248"><a href="#cb21-248" aria-hidden="true" tabindex="-1"></a><span class="vs">            style="padding: 3px; font-size: HUGE; border: 1px solid #ccc; margin-left: 0px; border-radius: 4px; width: calc(</span><span class="sc">${</span>correctText<span class="op">.</span><span class="at">length</span><span class="sc">}</span><span class="vs">ch + 1em); font-family: </span><span class="sc">${</span>fontFamily<span class="sc">}</span><span class="vs">; color: </span><span class="sc">${</span>color<span class="sc">}</span><span class="vs">; text-align: right; box-sizing: border-box; margin-right: 0.2em;"</span></span>
+<span id="cb21-249"><a href="#cb21-249" aria-hidden="true" tabindex="-1"></a><span class="vs">            oninput=</span><span class="sc">${</span>(e) <span class="kw">=&gt;</span> {</span>
+<span id="cb21-250"><a href="#cb21-250" aria-hidden="true" tabindex="-1"></a>              <span class="kw">const</span> feedbackElement <span class="op">=</span> <span class="bu">root</span><span class="op">.</span><span class="fu">querySelector</span>(<span class="vs">`#feedback-final`</span>)<span class="op">;</span></span>
+<span id="cb21-251"><a href="#cb21-251" aria-hidden="true" tabindex="-1"></a>              <span class="kw">const</span> allInputsCorrect <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(<span class="bu">root</span><span class="op">.</span><span class="fu">querySelectorAll</span>(<span class="st">"input"</span>))<span class="op">.</span><span class="fu">every</span>((input) <span class="kw">=&gt;</span> input<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="fu">trim</span>() <span class="op">===</span> correctText<span class="op">.</span><span class="fu">trim</span>())<span class="op">;</span></span>
+<span id="cb21-252"><a href="#cb21-252" aria-hidden="true" tabindex="-1"></a>              <span class="cf">if</span> (allInputsCorrect) {</span>
+<span id="cb21-253"><a href="#cb21-253" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"✅"</span><span class="op">;</span></span>
+<span id="cb21-254"><a href="#cb21-254" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"green"</span><span class="op">;</span></span>
+<span id="cb21-255"><a href="#cb21-255" aria-hidden="true" tabindex="-1"></a>              } <span class="cf">else</span> {</span>
+<span id="cb21-256"><a href="#cb21-256" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"🔴"</span><span class="op">;</span></span>
+<span id="cb21-257"><a href="#cb21-257" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">;</span></span>
+<span id="cb21-258"><a href="#cb21-258" aria-hidden="true" tabindex="-1"></a>              }</span>
+<span id="cb21-259"><a href="#cb21-259" aria-hidden="true" tabindex="-1"></a>            }<span class="sc">}</span></span>
+<span id="cb21-260"><a href="#cb21-260" aria-hidden="true" tabindex="-1"></a><span class="vs">          /&gt;&lt;/span&gt;`</span> <span class="op">:</span> <span class="st">""</span><span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb21-261"><a href="#cb21-261" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb21-262"><a href="#cb21-262" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb21-263"><a href="#cb21-263" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;span id="feedback-final" style="font-weight: bold; font-size: HUGE; margin-left: 0.5em; color: inherit;"&gt;&lt;/span&gt;</span></span>
+<span id="cb21-264"><a href="#cb21-264" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb21-265"><a href="#cb21-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-266"><a href="#cb21-266" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb21-267"><a href="#cb21-267" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-268"><a href="#cb21-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-269"><a href="#cb21-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-270"><a href="#cb21-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-271"><a href="#cb21-271" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">textReplacementTask</span>({ placeholder<span class="op">,</span> correctText<span class="op">,</span> width <span class="op">=</span> <span class="st">"300px"</span><span class="op">,</span> fontFamily <span class="op">=</span> <span class="st">"monospace"</span><span class="op">,</span> color <span class="op">=</span> <span class="st">"black"</span> }) {</span>
+<span id="cb21-272"><a href="#cb21-272" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> enteredText <span class="op">=</span> <span class="st">""</span><span class="op">;</span> </span>
+<span id="cb21-273"><a href="#cb21-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-274"><a href="#cb21-274" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-size: 14px; line-height: 1.5; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb21-275"><a href="#cb21-275" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;h4&gt;Bitte ersetzen Sie den Text:&lt;/h4&gt;</span></span>
+<span id="cb21-276"><a href="#cb21-276" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;!-- Eingabefeld --&gt;</span></span>
+<span id="cb21-277"><a href="#cb21-277" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="display: flex; align-items: center;"&gt;</span></span>
+<span id="cb21-278"><a href="#cb21-278" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;input</span></span>
+<span id="cb21-279"><a href="#cb21-279" aria-hidden="true" tabindex="-1"></a><span class="vs">        type="text"</span></span>
+<span id="cb21-280"><a href="#cb21-280" aria-hidden="true" tabindex="-1"></a><span class="vs">        placeholder="</span><span class="sc">${</span>placeholder<span class="sc">}</span><span class="vs">"</span></span>
+<span id="cb21-281"><a href="#cb21-281" aria-hidden="true" tabindex="-1"></a><span class="vs">        style="padding: 5px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: </span><span class="sc">${</span>width<span class="sc">}</span><span class="vs">; font-family: </span><span class="sc">${</span>fontFamily<span class="sc">}</span><span class="vs">; color: </span><span class="sc">${</span>color<span class="sc">}</span><span class="vs">;"</span></span>
+<span id="cb21-282"><a href="#cb21-282" aria-hidden="true" tabindex="-1"></a><span class="vs">        onInput=</span><span class="sc">${</span>(e) <span class="kw">=&gt;</span> {</span>
+<span id="cb21-283"><a href="#cb21-283" aria-hidden="true" tabindex="-1"></a>          enteredText <span class="op">=</span> e<span class="op">.</span><span class="at">target</span><span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
+<span id="cb21-284"><a href="#cb21-284" aria-hidden="true" tabindex="-1"></a>          <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> enteredText<span class="op">;</span></span>
+<span id="cb21-285"><a href="#cb21-285" aria-hidden="true" tabindex="-1"></a>          <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb21-286"><a href="#cb21-286" aria-hidden="true" tabindex="-1"></a>          <span class="fu">updateFeedback</span>()<span class="op">;</span></span>
+<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a>        }<span class="sc">}</span></span>
+<span id="cb21-288"><a href="#cb21-288" aria-hidden="true" tabindex="-1"></a><span class="vs">      /&gt;</span></span>
+<span id="cb21-289"><a href="#cb21-289" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;!-- Feedback --&gt;</span></span>
+<span id="cb21-290"><a href="#cb21-290" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div id="feedback" style="font-weight: bold; font-size: 14px; margin-left: 10px; text-align: left; white-space: nowrap; color: inherit;"&gt;&lt;/div&gt;</span></span>
+<span id="cb21-291"><a href="#cb21-291" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb21-292"><a href="#cb21-292" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb21-293"><a href="#cb21-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-294"><a href="#cb21-294" aria-hidden="true" tabindex="-1"></a><span class="co">// Funktion zur Aktualisierung des Feedbacks</span></span>
+<span id="cb21-295"><a href="#cb21-295" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">updateFeedback</span>() {</span>
+<span id="cb21-296"><a href="#cb21-296" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> feedbackElement <span class="op">=</span> <span class="bu">root</span><span class="op">.</span><span class="fu">querySelector</span>(<span class="st">"#feedback"</span>)<span class="op">;</span></span>
+<span id="cb21-297"><a href="#cb21-297" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (enteredText<span class="op">.</span><span class="fu">trim</span>() <span class="op">===</span> correctText<span class="op">.</span><span class="fu">trim</span>()) {</span>
+<span id="cb21-298"><a href="#cb21-298" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"✅"</span><span class="op">;</span></span>
+<span id="cb21-299"><a href="#cb21-299" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"green"</span><span class="op">;</span></span>
+<span id="cb21-300"><a href="#cb21-300" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (enteredText<span class="op">.</span><span class="fu">trim</span>() <span class="op">===</span> <span class="st">""</span>) {</span>
+<span id="cb21-301"><a href="#cb21-301" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">""</span><span class="op">;</span> </span>
+<span id="cb21-302"><a href="#cb21-302" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb21-303"><a href="#cb21-303" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"🔴"</span><span class="op">;</span></span>
+<span id="cb21-304"><a href="#cb21-304" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">;</span></span>
+<span id="cb21-305"><a href="#cb21-305" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-306"><a href="#cb21-306" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-307"><a href="#cb21-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-308"><a href="#cb21-308" aria-hidden="true" tabindex="-1"></a>  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">null</span><span class="op">;</span> </span>
+<span id="cb21-309"><a href="#cb21-309" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb21-310"><a href="#cb21-310" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-311"><a href="#cb21-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-312"><a href="#cb21-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-313"><a href="#cb21-313" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">singleChoiceInput</span>({ options<span class="op">,</span> correctIndex }) {</span>
+<span id="cb21-314"><a href="#cb21-314" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> selectedAnswer <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb21-315"><a href="#cb21-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-316"><a href="#cb21-316" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-size: HUGE; line-height: 1.5; margin-bottom: 0px;"&gt;</span></span>
+<span id="cb21-317"><a href="#cb21-317" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;!-- Antworten --&gt;</span></span>
+<span id="cb21-318"><a href="#cb21-318" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="display: grid; row-gap: 12px;"&gt;</span></span>
+<span id="cb21-319"><a href="#cb21-319" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>options<span class="op">.</span><span class="fu">map</span>(</span>
+<span id="cb21-320"><a href="#cb21-320" aria-hidden="true" tabindex="-1"></a>        (option<span class="op">,</span> index) <span class="kw">=&gt;</span></span>
+<span id="cb21-321"><a href="#cb21-321" aria-hidden="true" tabindex="-1"></a>          htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="display: flex; align-items: center;"&gt;</span></span>
+<span id="cb21-322"><a href="#cb21-322" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;!-- Radiobutton und Option --&gt;</span></span>
+<span id="cb21-323"><a href="#cb21-323" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;label style="display: flex; align-items: center; padding-left: 4pt; font-weight: normal;"&gt;</span></span>
+<span id="cb21-324"><a href="#cb21-324" aria-hidden="true" tabindex="-1"></a><span class="vs">              &lt;input</span></span>
+<span id="cb21-325"><a href="#cb21-325" aria-hidden="true" tabindex="-1"></a><span class="vs">                type="radio"</span></span>
+<span id="cb21-326"><a href="#cb21-326" aria-hidden="true" tabindex="-1"></a><span class="vs">                name="singleChoice"</span></span>
+<span id="cb21-327"><a href="#cb21-327" aria-hidden="true" tabindex="-1"></a><span class="vs">                value=</span><span class="sc">${</span>index<span class="sc">}</span></span>
+<span id="cb21-328"><a href="#cb21-328" aria-hidden="true" tabindex="-1"></a><span class="vs">                style="margin-right: 10px;"</span></span>
+<span id="cb21-329"><a href="#cb21-329" aria-hidden="true" tabindex="-1"></a><span class="vs">                onChange=</span><span class="sc">${</span>() <span class="kw">=&gt;</span> {</span>
+<span id="cb21-330"><a href="#cb21-330" aria-hidden="true" tabindex="-1"></a>                  selectedAnswer <span class="op">=</span> index<span class="op">;</span></span>
+<span id="cb21-331"><a href="#cb21-331" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> selectedAnswer<span class="op">;</span></span>
+<span id="cb21-332"><a href="#cb21-332" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb21-333"><a href="#cb21-333" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">updateFeedback</span>()<span class="op">;</span></span>
+<span id="cb21-334"><a href="#cb21-334" aria-hidden="true" tabindex="-1"></a>                }<span class="sc">}</span></span>
+<span id="cb21-335"><a href="#cb21-335" aria-hidden="true" tabindex="-1"></a><span class="vs">              /&gt;</span></span>
+<span id="cb21-336"><a href="#cb21-336" aria-hidden="true" tabindex="-1"></a><span class="vs">              &lt;span&gt;</span><span class="sc">${</span>option<span class="sc">}</span><span class="vs">&lt;/span&gt;</span></span>
+<span id="cb21-337"><a href="#cb21-337" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;/label&gt;</span></span>
+<span id="cb21-338"><a href="#cb21-338" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;!-- Feedback --&gt;</span></span>
+<span id="cb21-339"><a href="#cb21-339" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;div id="feedback-</span><span class="sc">${</span>index<span class="sc">}</span><span class="vs">" style="font-weight: bold; font-size: 14px; margin-left: 10px; text-align: left; white-space: nowrap; color: inherit;"&gt;&lt;/div&gt;</span></span>
+<span id="cb21-340"><a href="#cb21-340" aria-hidden="true" tabindex="-1"></a><span class="vs">          &lt;/div&gt;`</span></span>
+<span id="cb21-341"><a href="#cb21-341" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb21-342"><a href="#cb21-342" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb21-343"><a href="#cb21-343" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb21-344"><a href="#cb21-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-345"><a href="#cb21-345" aria-hidden="true" tabindex="-1"></a><span class="co">// Funktion zur Aktualisierung des Feedbacks</span></span>
+<span id="cb21-346"><a href="#cb21-346" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">updateFeedback</span>() {</span>
+<span id="cb21-347"><a href="#cb21-347" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">forEach</span>((_<span class="op">,</span> index) <span class="kw">=&gt;</span> {</span>
+<span id="cb21-348"><a href="#cb21-348" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> feedbackElement <span class="op">=</span> <span class="bu">root</span><span class="op">.</span><span class="fu">querySelector</span>(<span class="vs">`#feedback-</span><span class="sc">${</span>index<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb21-349"><a href="#cb21-349" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (selectedAnswer <span class="op">===</span> index) {</span>
+<span id="cb21-350"><a href="#cb21-350" aria-hidden="true" tabindex="-1"></a>        feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span></span>
+<span id="cb21-351"><a href="#cb21-351" aria-hidden="true" tabindex="-1"></a>          index <span class="op">===</span> correctIndex <span class="op">?</span> <span class="st">"✅"</span> <span class="op">:</span> <span class="st">"🔴"</span><span class="op">;</span></span>
+<span id="cb21-352"><a href="#cb21-352" aria-hidden="true" tabindex="-1"></a>        feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> index <span class="op">===</span> correctIndex <span class="op">?</span> <span class="st">"green"</span> <span class="op">:</span> <span class="st">"red"</span><span class="op">;</span></span>
+<span id="cb21-353"><a href="#cb21-353" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb21-354"><a href="#cb21-354" aria-hidden="true" tabindex="-1"></a>        feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">""</span><span class="op">;</span> <span class="co">// Löscht Feedback für nicht ausgewählte Optionen</span></span>
+<span id="cb21-355"><a href="#cb21-355" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb21-356"><a href="#cb21-356" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb21-357"><a href="#cb21-357" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-358"><a href="#cb21-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-359"><a href="#cb21-359" aria-hidden="true" tabindex="-1"></a>  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb21-360"><a href="#cb21-360" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb21-361"><a href="#cb21-361" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-362"><a href="#cb21-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-363"><a href="#cb21-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-364"><a href="#cb21-364" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">quizInput</span>({ questions<span class="op">,</span> options}) {</span>
+<span id="cb21-365"><a href="#cb21-365" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> answers <span class="op">=</span> questions<span class="op">.</span><span class="fu">map</span>(() <span class="kw">=&gt;</span> <span class="kw">null</span>)<span class="op">;</span></span>
+<span id="cb21-366"><a href="#cb21-366" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div</span></span>
+<span id="cb21-367"><a href="#cb21-367" aria-hidden="true" tabindex="-1"></a><span class="vs">      style="</span></span>
+<span id="cb21-368"><a href="#cb21-368" aria-hidden="true" tabindex="-1"></a><span class="vs">        display: grid;</span></span>
+<span id="cb21-369"><a href="#cb21-369" aria-hidden="true" tabindex="-1"></a><span class="vs">        grid-template-columns: 10% 10% 70% 10%;"</span></span>
+<span id="cb21-370"><a href="#cb21-370" aria-hidden="true" tabindex="-1"></a><span class="vs">    &gt;</span></span>
+<span id="cb21-371"><a href="#cb21-371" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>options<span class="op">.</span><span class="fu">map</span>(</span>
+<span id="cb21-372"><a href="#cb21-372" aria-hidden="true" tabindex="-1"></a>        (opt) <span class="kw">=&gt;</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-weight: bold; font-size: HUGE"&gt;</span><span class="sc">${</span>opt<span class="sc">}</span><span class="vs">&lt;/div&gt;`</span></span>
+<span id="cb21-373"><a href="#cb21-373" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb21-374"><a href="#cb21-374" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div style="font-weight: bold"&gt;Statement&lt;/div&gt;</span></span>
+<span id="cb21-375"><a href="#cb21-375" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div style="font-weight: bold"&gt;&lt;/div&gt;</span></span>
+<span id="cb21-376"><a href="#cb21-376" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span><span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(questions<span class="op">.</span><span class="fu">entries</span>()<span class="op">,</span> ([i<span class="op">,</span> [question<span class="op">,</span> correct]]) <span class="kw">=&gt;</span></span>
+<span id="cb21-377"><a href="#cb21-377" aria-hidden="true" tabindex="-1"></a>        <span class="fu">quizInputRow</span>({</span>
+<span id="cb21-378"><a href="#cb21-378" aria-hidden="true" tabindex="-1"></a>          question<span class="op">,</span></span>
+<span id="cb21-379"><a href="#cb21-379" aria-hidden="true" tabindex="-1"></a>          options<span class="op">,</span></span>
+<span id="cb21-380"><a href="#cb21-380" aria-hidden="true" tabindex="-1"></a>          correct<span class="op">,</span></span>
+<span id="cb21-381"><a href="#cb21-381" aria-hidden="true" tabindex="-1"></a>          <span class="dt">onChange</span><span class="op">:</span> (newAnswer) <span class="kw">=&gt;</span> {</span>
+<span id="cb21-382"><a href="#cb21-382" aria-hidden="true" tabindex="-1"></a>            answers[i] <span class="op">=</span> newAnswer<span class="op">;</span></span>
+<span id="cb21-383"><a href="#cb21-383" aria-hidden="true" tabindex="-1"></a>            <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> answers<span class="op">;</span></span>
+<span id="cb21-384"><a href="#cb21-384" aria-hidden="true" tabindex="-1"></a>            <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb21-385"><a href="#cb21-385" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb21-386"><a href="#cb21-386" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb21-387"><a href="#cb21-387" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb21-388"><a href="#cb21-388" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb21-389"><a href="#cb21-389" aria-hidden="true" tabindex="-1"></a>  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> answers<span class="op">;</span></span>
+<span id="cb21-390"><a href="#cb21-390" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb21-391"><a href="#cb21-391" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-392"><a href="#cb21-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-393"><a href="#cb21-393" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">quizInputRow</span>({</span>
+<span id="cb21-394"><a href="#cb21-394" aria-hidden="true" tabindex="-1"></a>  question<span class="op">,</span></span>
+<span id="cb21-395"><a href="#cb21-395" aria-hidden="true" tabindex="-1"></a>  options<span class="op">,</span></span>
+<span id="cb21-396"><a href="#cb21-396" aria-hidden="true" tabindex="-1"></a>  correct<span class="op">,</span></span>
+<span id="cb21-397"><a href="#cb21-397" aria-hidden="true" tabindex="-1"></a>  onChange <span class="op">=</span> () <span class="kw">=&gt;</span> {}</span>
+<span id="cb21-398"><a href="#cb21-398" aria-hidden="true" tabindex="-1"></a>}) {</span>
+<span id="cb21-399"><a href="#cb21-399" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div&gt;`</span><span class="op">;</span></span>
+<span id="cb21-400"><a href="#cb21-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-401"><a href="#cb21-401" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">setAnswer</span>(answer<span class="op">,</span> initial <span class="op">=</span> <span class="kw">false</span>) {</span>
+<span id="cb21-402"><a href="#cb21-402" aria-hidden="true" tabindex="-1"></a>    <span class="fu">morph</span>(</span>
+<span id="cb21-403"><a href="#cb21-403" aria-hidden="true" tabindex="-1"></a>      <span class="bu">root</span><span class="op">,</span></span>
+<span id="cb21-404"><a href="#cb21-404" aria-hidden="true" tabindex="-1"></a>      htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="display: contents"&gt; </span></span>
+<span id="cb21-405"><a href="#cb21-405" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;form style="display: contents"&gt;</span></span>
+<span id="cb21-406"><a href="#cb21-406" aria-hidden="true" tabindex="-1"></a><span class="vs">        </span><span class="sc">${</span>options<span class="op">.</span><span class="fu">map</span>(</span>
+<span id="cb21-407"><a href="#cb21-407" aria-hidden="true" tabindex="-1"></a>          (opt) <span class="kw">=&gt;</span></span>
+<span id="cb21-408"><a href="#cb21-408" aria-hidden="true" tabindex="-1"></a>            htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;label&gt;&amp;emsp;&lt;/label&gt; </span></span>
+<span id="cb21-409"><a href="#cb21-409" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;input  </span></span>
+<span id="cb21-410"><a href="#cb21-410" aria-hidden="true" tabindex="-1"></a><span class="vs">              name=</span><span class="sc">${</span>question<span class="sc">}</span><span class="vs"> &amp;emsp;</span></span>
+<span id="cb21-411"><a href="#cb21-411" aria-hidden="true" tabindex="-1"></a><span class="vs">              type="radio"</span></span>
+<span id="cb21-412"><a href="#cb21-412" aria-hidden="true" tabindex="-1"></a><span class="vs">              value="</span><span class="sc">${</span>opt<span class="sc">}</span><span class="vs">"</span></span>
+<span id="cb21-413"><a href="#cb21-413" aria-hidden="true" tabindex="-1"></a><span class="vs">              checked=</span><span class="sc">${</span>opt <span class="op">===</span> answer<span class="sc">}</span></span>
+<span id="cb21-414"><a href="#cb21-414" aria-hidden="true" tabindex="-1"></a><span class="vs">              onChange=</span><span class="sc">${</span>() <span class="kw">=&gt;</span> <span class="fu">setAnswer</span>(opt)<span class="sc">}</span></span>
+<span id="cb21-415"><a href="#cb21-415" aria-hidden="true" tabindex="-1"></a><span class="vs">            &gt;</span></span>
+<span id="cb21-416"><a href="#cb21-416" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;/input&gt;`</span></span>
+<span id="cb21-417"><a href="#cb21-417" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">}</span></span>
+<span id="cb21-418"><a href="#cb21-418" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;/form&gt;</span></span>
+<span id="cb21-419"><a href="#cb21-419" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div&gt;</span><span class="sc">${</span>question<span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
+<span id="cb21-420"><a href="#cb21-420" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div&gt; &amp;emsp; </span><span class="sc">${</span></span>
+<span id="cb21-421"><a href="#cb21-421" aria-hidden="true" tabindex="-1"></a>       answer <span class="op">===</span> <span class="kw">null</span> <span class="op">?</span> <span class="st">""</span> <span class="op">:</span> answer <span class="op">===</span> correct <span class="op">?</span> <span class="st">"✅"</span> <span class="op">:</span> <span class="st">"🔴"</span></span>
+<span id="cb21-422"><a href="#cb21-422" aria-hidden="true" tabindex="-1"></a>      <span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
+<span id="cb21-423"><a href="#cb21-423" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span></span>
+<span id="cb21-424"><a href="#cb21-424" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb21-425"><a href="#cb21-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-426"><a href="#cb21-426" aria-hidden="true" tabindex="-1"></a>    <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> answer<span class="op">;</span></span>
+<span id="cb21-427"><a href="#cb21-427" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>initial) {</span>
+<span id="cb21-428"><a href="#cb21-428" aria-hidden="true" tabindex="-1"></a>      <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb21-429"><a href="#cb21-429" aria-hidden="true" tabindex="-1"></a>      <span class="fu">onChange</span>(answer)<span class="op">;</span></span>
+<span id="cb21-430"><a href="#cb21-430" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-431"><a href="#cb21-431" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-432"><a href="#cb21-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-433"><a href="#cb21-433" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setAnswer</span>(<span class="kw">null</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb21-434"><a href="#cb21-434" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb21-435"><a href="#cb21-435" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-436"><a href="#cb21-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-437"><a href="#cb21-437" aria-hidden="true" tabindex="-1"></a>morph <span class="op">=</span> <span class="pp">require</span>(<span class="st">"https://bundle.run/nanomorph@5.4.2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-5" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-6" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-7" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>🎲 Question 1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Which of the following statements about inspecting and transforming data are correct?</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb22" data-startfrom="2" data-source-offset="-1"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 1;"><span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>MC_data_management_1 <span class="op">=</span> [</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"glimpse() provides an overview of variables and their data types."</span><span class="op">,</span> <span class="st">"True"</span>]<span class="op">,</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"rename(new = old) renames a variable in a dataset."</span><span class="op">,</span> <span class="st">"True"</span>]<span class="op">,</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"Cronbach’s α should always be exactly 1 to create a consistent index."</span><span class="op">,</span> <span class="st">"False"</span>]<span class="op">,</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"na_if() removes rows from a dataset."</span><span class="op">,</span> <span class="st">"False"</span>]</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>viewof answers_data_management_1 <span class="op">=</span> <span class="fu">quizInput</span>({</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">questions</span><span class="op">:</span> MC_data_management_1<span class="op">,</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">options</span><span class="op">:</span> [<span class="st">"True"</span><span class="op">,</span> <span class="st">"False"</span>]</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6Ilxucm91bmQgPSAobiwgcGxhY2VzKSA9PiB7XG4gIGlmICghcGxhY2VzKSByZXR1cm4gTWF0aC5yb3VuZChuKTtcbiAgY29uc3QgZCA9IDEwICoqIHBsYWNlcztcbiAgcmV0dXJuIE1hdGgucm91bmQobiAqIGQpIC8gZDtcbn1cblxuZnVuY3Rpb24gdGV4dFJlcGxhY2VtZW50V2l0aFRleHQoeyB0ZXh0LCBwbGFjZWhvbGRlciwgY29ycmVjdFRleHQsIGZvbnRGYW1pbHkgPSBcIm1vbm9zcGFjZVwiLCBjb2xvciA9IFwiIzAwMDAwMFwiIH0pIHtcbiAgY29uc3QgcGFydHMgPSB0ZXh0LnNwbGl0KC9cXHtcXHtpbnB1dFxcfVxcfS8pOyAvLyBUZWlsdCBkZW4gVGV4dCBhbiBkZW4gRWluZ2FiZXN0ZWxsZW5cblxuICBjb25zdCByb290ID0gaHRsLmh0bWxgPGRpdiBzdHlsZT1cImZvbnQtc2l6ZTogSFVHRTsgbWFyZ2luLXRvcDogLTQwOyBtYXJnaW4tYm90dG9tOiAtNDA7IG1hcmdpbi1sZWZ0OiAtNTBweDsgbGluZS1oZWlnaHQ6IDEuODsgZm9udC1mYW1pbHk6ICR7Zm9udEZhbWlseX07IGNvbG9yOiAke2NvbG9yfTsgd2hpdGUtc3BhY2U6IHByZS13cmFwOyB0ZXh0LWluZGVudDogMDsgZGlzcGxheTogZmxleDsgYWxpZ24taXRlbXM6IGJhc2VsaW5lO1wiPlxuICAgIDxkaXYgc3R5bGU9XCJmbGV4OiAxO1wiPlxuICAgICAgJHtwYXJ0cy5tYXAoKHBhcnQsIGluZGV4KSA9PlxuICAgICAgICBodGwuaHRtbGAke3BhcnR9JHtpbmRleCA8IHBhcnRzLmxlbmd0aCAtIDEgPyBodGwuaHRtbGA8c3BhbiBzdHlsZT1cImRpc3BsYXk6IGlubGluZS1mbGV4OyBhbGlnbi1pdGVtczogYmFzZWxpbmU7XCI+XG4gICAgICAgICAgPGlucHV0IFxuICAgICAgICAgICAgdHlwZT1cInRleHRcIlxuICAgICAgICAgICAgcGxhY2Vob2xkZXI9XCIke3BsYWNlaG9sZGVyfVwiXG4gICAgICAgICAgICBzdHlsZT1cInBhZGRpbmc6IDNweDsgZm9udC1zaXplOiBIVUdFOyBib3JkZXI6IDFweCBzb2xpZCAjY2NjOyBtYXJnaW4tbGVmdDogMHB4OyBib3JkZXItcmFkaXVzOiA0cHg7IHdpZHRoOiBjYWxjKCR7Y29ycmVjdFRleHQubGVuZ3RofWNoICsgMWVtKTsgZm9udC1mYW1pbHk6ICR7Zm9udEZhbWlseX07IGNvbG9yOiAke2NvbG9yfTsgdGV4dC1hbGlnbjogcmlnaHQ7IGJveC1zaXppbmc6IGJvcmRlci1ib3g7IG1hcmdpbi1yaWdodDogMC4yZW07XCJcbiAgICAgICAgICAgIG9uaW5wdXQ9JHsoZSkgPT4ge1xuICAgICAgICAgICAgICBjb25zdCBmZWVkYmFja0VsZW1lbnQgPSByb290LnF1ZXJ5U2VsZWN0b3IoYCNmZWVkYmFjay1maW5hbGApO1xuICAgICAgICAgICAgICBjb25zdCBhbGxJbnB1dHNDb3JyZWN0ID0gQXJyYXkuZnJvbShyb290LnF1ZXJ5U2VsZWN0b3JBbGwoXCJpbnB1dFwiKSkuZXZlcnkoKGlucHV0KSA9PiBpbnB1dC52YWx1ZS50cmltKCkgPT09IGNvcnJlY3RUZXh0LnRyaW0oKSk7XG4gICAgICAgICAgICAgIGlmIChhbGxJbnB1dHNDb3JyZWN0KSB7XG4gICAgICAgICAgICAgICAgZmVlZGJhY2tFbGVtZW50LnRleHRDb250ZW50ID0gXCLinIVcIjtcbiAgICAgICAgICAgICAgICBmZWVkYmFja0VsZW1lbnQuc3R5bGUuY29sb3IgPSBcImdyZWVuXCI7XG4gICAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgZmVlZGJhY2tFbGVtZW50LnRleHRDb250ZW50ID0gXCLwn5S0XCI7XG4gICAgICAgICAgICAgICAgZmVlZGJhY2tFbGVtZW50LnN0eWxlLmNvbG9yID0gXCJyZWRcIjtcbiAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgfX1cbiAgICAgICAgICAvPjwvc3Bhbj5gIDogXCJcIn1gXG4gICAgICApfVxuICAgIDwvZGl2PlxuICAgIDxzcGFuIGlkPVwiZmVlZGJhY2stZmluYWxcIiBzdHlsZT1cImZvbnQtd2VpZ2h0OiBib2xkOyBmb250LXNpemU6IEhVR0U7IG1hcmdpbi1sZWZ0OiAwLjVlbTsgY29sb3I6IGluaGVyaXQ7XCI+PC9zcGFuPlxuICA8L2Rpdj5gO1xuXG4gIHJldHVybiByb290O1xufVxuXG5cblxuZnVuY3Rpb24gdGV4dFJlcGxhY2VtZW50VGFzayh7IHBsYWNlaG9sZGVyLCBjb3JyZWN0VGV4dCwgd2lkdGggPSBcIjMwMHB4XCIsIGZvbnRGYW1pbHkgPSBcIm1vbm9zcGFjZVwiLCBjb2xvciA9IFwiYmxhY2tcIiB9KSB7XG4gIGxldCBlbnRlcmVkVGV4dCA9IFwiXCI7IFxuXG4gIGNvbnN0IHJvb3QgPSBodGwuaHRtbGA8ZGl2IHN0eWxlPVwiZm9udC1zaXplOiAxNHB4OyBsaW5lLWhlaWdodDogMS41OyBtYXJnaW4tYm90dG9tOiAyMHB4O1wiPlxuICAgIDxoND5CaXR0ZSBlcnNldHplbiBTaWUgZGVuIFRleHQ6PC9oND5cbiAgICA8IS0tIEVpbmdhYmVmZWxkIC0tPlxuICAgIDxkaXYgc3R5bGU9XCJkaXNwbGF5OiBmbGV4OyBhbGlnbi1pdGVtczogY2VudGVyO1wiPlxuICAgICAgPGlucHV0XG4gICAgICAgIHR5cGU9XCJ0ZXh0XCJcbiAgICAgICAgcGxhY2Vob2xkZXI9XCIke3BsYWNlaG9sZGVyfVwiXG4gICAgICAgIHN0eWxlPVwicGFkZGluZzogNXB4OyBmb250LXNpemU6IDE0cHg7IGJvcmRlcjogMXB4IHNvbGlkICNjY2M7IGJvcmRlci1yYWRpdXM6IDRweDsgd2lkdGg6ICR7d2lkdGh9OyBmb250LWZhbWlseTogJHtmb250RmFtaWx5fTsgY29sb3I6ICR7Y29sb3J9O1wiXG4gICAgICAgIG9uSW5wdXQ9JHsoZSkgPT4ge1xuICAgICAgICAgIGVudGVyZWRUZXh0ID0gZS50YXJnZXQudmFsdWU7XG4gICAgICAgICAgcm9vdC52YWx1ZSA9IGVudGVyZWRUZXh0O1xuICAgICAgICAgIHJvb3QuZGlzcGF0Y2hFdmVudChuZXcgQ3VzdG9tRXZlbnQoXCJpbnB1dFwiKSk7XG4gICAgICAgICAgdXBkYXRlRmVlZGJhY2soKTtcbiAgICAgICAgfX1cbiAgICAgIC8+XG4gICAgICA8IS0tIEZlZWRiYWNrIC0tPlxuICAgICAgPGRpdiBpZD1cImZlZWRiYWNrXCIgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZDsgZm9udC1zaXplOiAxNHB4OyBtYXJnaW4tbGVmdDogMTBweDsgdGV4dC1hbGlnbjogbGVmdDsgd2hpdGUtc3BhY2U6IG5vd3JhcDsgY29sb3I6IGluaGVyaXQ7XCI+PC9kaXY+XG4gICAgPC9kaXY+XG4gIDwvZGl2PmA7XG5cbi8vIEZ1bmt0aW9uIHp1ciBBa3R1YWxpc2llcnVuZyBkZXMgRmVlZGJhY2tzXG4gIGZ1bmN0aW9uIHVwZGF0ZUZlZWRiYWNrKCkge1xuICAgIGNvbnN0IGZlZWRiYWNrRWxlbWVudCA9IHJvb3QucXVlcnlTZWxlY3RvcihcIiNmZWVkYmFja1wiKTtcbiAgICBpZiAoZW50ZXJlZFRleHQudHJpbSgpID09PSBjb3JyZWN0VGV4dC50cmltKCkpIHtcbiAgICAgIGZlZWRiYWNrRWxlbWVudC50ZXh0Q29udGVudCA9IFwi4pyFXCI7XG4gICAgICBmZWVkYmFja0VsZW1lbnQuc3R5bGUuY29sb3IgPSBcImdyZWVuXCI7XG4gICAgfSBlbHNlIGlmIChlbnRlcmVkVGV4dC50cmltKCkgPT09IFwiXCIpIHtcbiAgICAgIGZlZWRiYWNrRWxlbWVudC50ZXh0Q29udGVudCA9IFwiXCI7IFxuICAgIH0gZWxzZSB7XG4gICAgICBmZWVkYmFja0VsZW1lbnQudGV4dENvbnRlbnQgPSBcIvCflLRcIjtcbiAgICAgIGZlZWRiYWNrRWxlbWVudC5zdHlsZS5jb2xvciA9IFwicmVkXCI7XG4gICAgfVxuICB9XG5cbiAgcm9vdC52YWx1ZSA9IG51bGw7IFxuICByZXR1cm4gcm9vdDtcbn1cblxuXG5mdW5jdGlvbiBzaW5nbGVDaG9pY2VJbnB1dCh7IG9wdGlvbnMsIGNvcnJlY3RJbmRleCB9KSB7XG4gIGxldCBzZWxlY3RlZEFuc3dlciA9IG51bGw7XG5cbiAgY29uc3Qgcm9vdCA9IGh0bC5odG1sYDxkaXYgc3R5bGU9XCJmb250LXNpemU6IEhVR0U7IGxpbmUtaGVpZ2h0OiAxLjU7IG1hcmdpbi1ib3R0b206IDBweDtcIj5cbiAgICA8IS0tIEFudHdvcnRlbiAtLT5cbiAgICA8ZGl2IHN0eWxlPVwiZGlzcGxheTogZ3JpZDsgcm93LWdhcDogMTJweDtcIj5cbiAgICAgICR7b3B0aW9ucy5tYXAoXG4gICAgICAgIChvcHRpb24sIGluZGV4KSA9PlxuICAgICAgICAgIGh0bC5odG1sYDxkaXYgc3R5bGU9XCJkaXNwbGF5OiBmbGV4OyBhbGlnbi1pdGVtczogY2VudGVyO1wiPlxuICAgICAgICAgICAgPCEtLSBSYWRpb2J1dHRvbiB1bmQgT3B0aW9uIC0tPlxuICAgICAgICAgICAgPGxhYmVsIHN0eWxlPVwiZGlzcGxheTogZmxleDsgYWxpZ24taXRlbXM6IGNlbnRlcjsgcGFkZGluZy1sZWZ0OiA0cHQ7IGZvbnQtd2VpZ2h0OiBub3JtYWw7XCI+XG4gICAgICAgICAgICAgIDxpbnB1dFxuICAgICAgICAgICAgICAgIHR5cGU9XCJyYWRpb1wiXG4gICAgICAgICAgICAgICAgbmFtZT1cInNpbmdsZUNob2ljZVwiXG4gICAgICAgICAgICAgICAgdmFsdWU9JHtpbmRleH1cbiAgICAgICAgICAgICAgICBzdHlsZT1cIm1hcmdpbi1yaWdodDogMTBweDtcIlxuICAgICAgICAgICAgICAgIG9uQ2hhbmdlPSR7KCkgPT4ge1xuICAgICAgICAgICAgICAgICAgc2VsZWN0ZWRBbnN3ZXIgPSBpbmRleDtcbiAgICAgICAgICAgICAgICAgIHJvb3QudmFsdWUgPSBzZWxlY3RlZEFuc3dlcjtcbiAgICAgICAgICAgICAgICAgIHJvb3QuZGlzcGF0Y2hFdmVudChuZXcgQ3VzdG9tRXZlbnQoXCJpbnB1dFwiKSk7XG4gICAgICAgICAgICAgICAgICB1cGRhdGVGZWVkYmFjaygpO1xuICAgICAgICAgICAgICAgIH19XG4gICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgIDxzcGFuPiR7b3B0aW9ufTwvc3Bhbj5cbiAgICAgICAgICAgIDwvbGFiZWw+XG4gICAgICAgICAgICA8IS0tIEZlZWRiYWNrIC0tPlxuICAgICAgICAgICAgPGRpdiBpZD1cImZlZWRiYWNrLSR7aW5kZXh9XCIgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZDsgZm9udC1zaXplOiAxNHB4OyBtYXJnaW4tbGVmdDogMTBweDsgdGV4dC1hbGlnbjogbGVmdDsgd2hpdGUtc3BhY2U6IG5vd3JhcDsgY29sb3I6IGluaGVyaXQ7XCI+PC9kaXY+XG4gICAgICAgICAgPC9kaXY+YFxuICAgICAgKX1cbiAgICA8L2Rpdj5cbiAgPC9kaXY+YDtcblxuLy8gRnVua3Rpb24genVyIEFrdHVhbGlzaWVydW5nIGRlcyBGZWVkYmFja3NcbiAgZnVuY3Rpb24gdXBkYXRlRmVlZGJhY2soKSB7XG4gICAgb3B0aW9ucy5mb3JFYWNoKChfLCBpbmRleCkgPT4ge1xuICAgICAgY29uc3QgZmVlZGJhY2tFbGVtZW50ID0gcm9vdC5xdWVyeVNlbGVjdG9yKGAjZmVlZGJhY2stJHtpbmRleH1gKTtcbiAgICAgIGlmIChzZWxlY3RlZEFuc3dlciA9PT0gaW5kZXgpIHtcbiAgICAgICAgZmVlZGJhY2tFbGVtZW50LnRleHRDb250ZW50ID1cbiAgICAgICAgICBpbmRleCA9PT0gY29ycmVjdEluZGV4ID8gXCLinIVcIiA6IFwi8J+UtFwiO1xuICAgICAgICBmZWVkYmFja0VsZW1lbnQuc3R5bGUuY29sb3IgPSBpbmRleCA9PT0gY29ycmVjdEluZGV4ID8gXCJncmVlblwiIDogXCJyZWRcIjtcbiAgICAgIH0gZWxzZSB7XG4gICAgICAgIGZlZWRiYWNrRWxlbWVudC50ZXh0Q29udGVudCA9IFwiXCI7IC8vIEzDtnNjaHQgRmVlZGJhY2sgZsO8ciBuaWNodCBhdXNnZXfDpGhsdGUgT3B0aW9uZW5cbiAgICAgIH1cbiAgICB9KTtcbiAgfVxuXG4gIHJvb3QudmFsdWUgPSBudWxsO1xuICByZXR1cm4gcm9vdDtcbn1cblxuXG5mdW5jdGlvbiBxdWl6SW5wdXQoeyBxdWVzdGlvbnMsIG9wdGlvbnN9KSB7XG4gIGxldCBhbnN3ZXJzID0gcXVlc3Rpb25zLm1hcCgoKSA9PiBudWxsKTtcbiAgbGV0IHJvb3QgPSBodGwuaHRtbGA8ZGl2XG4gICAgICBzdHlsZT1cIlxuICAgICAgICBkaXNwbGF5OiBncmlkO1xuICAgICAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDEwJSAxMCUgNzAlIDEwJTtcIlxuICAgID5cbiAgICAgICR7b3B0aW9ucy5tYXAoXG4gICAgICAgIChvcHQpID0+IGh0bC5odG1sYDxkaXYgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZDsgZm9udC1zaXplOiBIVUdFXCI+JHtvcHR9PC9kaXY+YFxuICAgICAgKX1cbiAgICAgIDxkaXYgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZFwiPlN0YXRlbWVudDwvZGl2PlxuICAgICAgPGRpdiBzdHlsZT1cImZvbnQtd2VpZ2h0OiBib2xkXCI+PC9kaXY+XG4gICAgICAke0FycmF5LmZyb20ocXVlc3Rpb25zLmVudHJpZXMoKSwgKFtpLCBbcXVlc3Rpb24sIGNvcnJlY3RdXSkgPT5cbiAgICAgICAgcXVpeklucHV0Um93KHtcbiAgICAgICAgICBxdWVzdGlvbixcbiAgICAgICAgICBvcHRpb25zLFxuICAgICAgICAgIGNvcnJlY3QsXG4gICAgICAgICAgb25DaGFuZ2U6IChuZXdBbnN3ZXIpID0+IHtcbiAgICAgICAgICAgIGFuc3dlcnNbaV0gPSBuZXdBbnN3ZXI7XG4gICAgICAgICAgICByb290LnZhbHVlID0gYW5zd2VycztcbiAgICAgICAgICAgIHJvb3QuZGlzcGF0Y2hFdmVudChuZXcgQ3VzdG9tRXZlbnQoXCJpbnB1dFwiKSk7XG4gICAgICAgICAgfVxuICAgICAgICB9KVxuICAgICAgKX1cbiAgICA8L2Rpdj5gO1xuICByb290LnZhbHVlID0gYW5zd2VycztcbiAgcmV0dXJuIHJvb3Q7XG59XG5cbmZ1bmN0aW9uIHF1aXpJbnB1dFJvdyh7XG4gIHF1ZXN0aW9uLFxuICBvcHRpb25zLFxuICBjb3JyZWN0LFxuICBvbkNoYW5nZSA9ICgpID0+IHt9XG59KSB7XG4gIGxldCByb290ID0gaHRsLmh0bWxgPGRpdj5gO1xuXG4gIGZ1bmN0aW9uIHNldEFuc3dlcihhbnN3ZXIsIGluaXRpYWwgPSBmYWxzZSkge1xuICAgIG1vcnBoKFxuICAgICAgcm9vdCxcbiAgICAgIGh0bC5odG1sYDxkaXYgc3R5bGU9XCJkaXNwbGF5OiBjb250ZW50c1wiPiBcbiAgICAgIDxmb3JtIHN0eWxlPVwiZGlzcGxheTogY29udGVudHNcIj5cbiAgICAgICAgJHtvcHRpb25zLm1hcChcbiAgICAgICAgICAob3B0KSA9PlxuICAgICAgICAgICAgaHRsLmh0bWxgPGxhYmVsPiZlbXNwOzwvbGFiZWw+IFxuICAgICAgICAgICAgPGlucHV0ICBcbiAgICAgICAgICAgICAgbmFtZT0ke3F1ZXN0aW9ufSAmZW1zcDtcbiAgICAgICAgICAgICAgdHlwZT1cInJhZGlvXCJcbiAgICAgICAgICAgICAgdmFsdWU9XCIke29wdH1cIlxuICAgICAgICAgICAgICBjaGVja2VkPSR7b3B0ID09PSBhbnN3ZXJ9XG4gICAgICAgICAgICAgIG9uQ2hhbmdlPSR7KCkgPT4gc2V0QW5zd2VyKG9wdCl9XG4gICAgICAgICAgICA+XG4gICAgICAgICAgICA8L2lucHV0PmBcbiAgICAgICAgKX1cbiAgICAgIDwvZm9ybT5cbiAgICAgIDxkaXY+JHtxdWVzdGlvbn08L2Rpdj5cbiAgICAgIDxkaXY+ICZlbXNwOyAke1xuICAgICAgIGFuc3dlciA9PT0gbnVsbCA/IFwiXCIgOiBhbnN3ZXIgPT09IGNvcnJlY3QgPyBcIuKchVwiIDogXCLwn5S0XCJcbiAgICAgIH08L2Rpdj5cbiAgICA8L2Rpdj5gXG4gICAgKTtcblxuICAgIHJvb3QudmFsdWUgPSBhbnN3ZXI7XG4gICAgaWYgKCFpbml0aWFsKSB7XG4gICAgICByb290LmRpc3BhdGNoRXZlbnQobmV3IEN1c3RvbUV2ZW50KFwiaW5wdXRcIikpO1xuICAgICAgb25DaGFuZ2UoYW5zd2VyKTtcbiAgICB9XG4gIH1cblxuICBzZXRBbnN3ZXIobnVsbCwgdHJ1ZSk7XG4gIHJldHVybiByb290O1xufVxuXG5tb3JwaCA9IHJlcXVpcmUoXCJodHRwczovL2J1bmRsZS5ydW4vbmFub21vcnBoQDUuNC4yXCIpXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTIiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJcbk1DX2RhdGFfbWFuYWdlbWVudF8xID0gW1xuICBbXCJnbGltcHNlKCkgcHJvdmlkZXMgYW4gb3ZlcnZpZXcgb2YgdmFyaWFibGVzIGFuZCB0aGVpciBkYXRhIHR5cGVzLlwiLCBcIlRydWVcIl0sXG4gIFtcInJlbmFtZShuZXcgPSBvbGQpIHJlbmFtZXMgYSB2YXJpYWJsZSBpbiBhIGRhdGFzZXQuXCIsIFwiVHJ1ZVwiXSxcbiAgW1wiQ3JvbmJhY2jigJlzIM6xIHNob3VsZCBhbHdheXMgYmUgZXhhY3RseSAxIHRvIGNyZWF0ZSBhIGNvbnNpc3RlbnQgaW5kZXguXCIsIFwiRmFsc2VcIl0sXG4gIFtcIm5hX2lmKCkgcmVtb3ZlcyByb3dzIGZyb20gYSBkYXRhc2V0LlwiLCBcIkZhbHNlXCJdXG5dXG5cbnZpZXdvZiBhbnN3ZXJzX2RhdGFfbWFuYWdlbWVudF8xID0gcXVpeklucHV0KHtcbiAgcXVlc3Rpb25zOiBNQ19kYXRhX21hbmFnZW1lbnRfMSxcbiAgb3B0aW9uczogW1wiVHJ1ZVwiLCBcIkZhbHNlXCJdXG59KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdhbnN3ZXJzX2RhdGFfbWFuYWdlbWVudF8xJykifV19
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../..";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./7-visuals.html" class="pagination-link" aria-label="7 Creating visuals with ggplot">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">7 Creating visuals with ggplot</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./80-appendix.html" class="pagination-link" aria-label="Appendix">
+        <span class="nav-page-text">Appendix</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>University of Klagenfurt | Built with <a href="https://quarto.org/">Quarto</a> | <a href="./imprint.html">Imprint</a> | Shared under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC license</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

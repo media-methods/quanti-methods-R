@@ -1,0 +1,37 @@
+/*-- scss:defaults --*/
+
+// Dark green colour scheme (layered on top of the "cosmo" theme)
+$green-dark:   #1E5631;  // main colour: headings, links, accents
+$green-darker: #143D22;  // hover / active states
+$green-mid:    #3D7A55;  // secondary accents
+$green-light:  #E7F1EA;  // light tint for backgrounds
+
+$primary:   $green-dark;
+$success:   $green-mid;
+$link-color: $green-dark;
+$link-hover-color: $green-darker;
+
+// callouts: learning goals & quizzes (note) and smart hacks (tip)
+$callout-color-note: $green-dark;
+$callout-color-tip:  #7A9A3A;
+
+// inline code
+$code-color: #2F6B47;
+$code-bg:    #F1F6F2;
+
+/*-- scss:rules --*/
+
+.sidebar-title,
+.quarto-title .title {
+  color: $green-dark;
+}
+
+.sidebar-item .sidebar-link.active,
+.sidebar-item .sidebar-link.active .menu-text {
+  color: $green-darker !important;
+  font-weight: 600;
+}
+
+.callout-note.callout-titled .callout-header {
+  background-color: $green-light;
+}

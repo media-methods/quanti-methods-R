@@ -1,0 +1,37 @@
+---
+title: "Welcome"
+format:
+  html:
+    toc: false
+---
+
+## Welcome! 👋 What Is This Compendium For? {.unnumbered}
+
+This compendium accompanies the course **Quantitative Methods with R**, which introduces BA students to using R for empirical social science research. No previous knowledge of R is required.
+
+Across nine tutorials, we will help you build practical skills for quantitative research:
+
+1.  **Workflow in R and RStudio**\
+    → setting up the infrastructure, writing clean code, getting help, working reproducibly
+
+2.  **Data management with the tidyverse**\
+    → importing, filtering, selecting, and transforming social science data
+
+3.  **Visualization & analysis**\
+    → visualizing data with `ggplot2`, computing and interpreting descriptive statistics
+
+## What Can You Expect? {.unnumbered}
+
+Each tutorial in this compendium includes:
+
+-   Explanations of new R functions and analysis methods (with example code)
+
+-   A short summary of the key takeaways & additional learning resources
+
+-   Practice exercises/quizzes to help you apply your new skills
+
+This tutorial is inspired by many people who talked to me about teaching R in times of generative AI. Thanks 🙌 to: Lara Kobilke, Michael Scharkow, Ben Fretwurst, Marko Bachl, Katharina Maubach, Jakob Jünger. In the spirit of open science, many even shared their materials with me - special shoutout to [Michael Scharkow](https://stats.ifp.uni-mainz.de/) and [Ben Fretwurst](https://ikmz.pages.uzh.ch/Wissen-macht-R/)!
+
+## What Do We Expect from You? {.unnumbered}
+
+To get the most out of our in-person sessions, you should complete the assigned tutorial *before* each class. Please check the syllabus to see which tutorial you should prepare for each week. That way, we can use our time together to clarify questions, go through examples, and apply what you have learned.

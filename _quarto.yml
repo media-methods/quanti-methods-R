@@ -1,0 +1,76 @@
+project:
+  type: book
+  output-dir: docs
+
+#resources: 
+#  - _common.R
+  
+book:
+  title: "Quantitative Methods with R"
+  description: "Data cleaning, management, analysis, and reporting with R"
+  author:
+    - name: "Valerie Hase"
+      affiliation: "University of Klagenfurt"
+  reader-mode: false
+
+  page-footer: 
+      center: |
+       University of Klagenfurt | Built with [Quarto](https://quarto.org/) |  [Imprint](imprint.qmd)  |  Shared under the [CC BY-NC license](https://creativecommons.org/licenses/by-nc/4.0/)   
+  #cover-image: cover.jpg
+  #favicon: cover.jpg
+  #site-url: 
+  # repo-url: https://github.com/<user>/<repo>  # add the repository of this course here
+  
+  chapters:
+    - index.qmd
+
+    - part: R Basics
+      chapters:
+       - 1-install-r.qmd
+       - 2-overview.qmd
+       - 3-workflow.qmd
+       - 4-coding-style.qmd
+       - 5-the-tidyverse.qmd
+
+    - part: Handling data in R
+      chapters:
+       - 6-data-types.qmd
+       - 7-visuals.qmd
+       - 8-data-management.qmd
+
+    - part: Statistics in R
+      #chapters:
+      # - 9-descriptive-analysis.qmd
+       
+    - part: 80-appendix.qmd
+      chapters:
+       - 81-glossary.qmd
+       - 83-faq-r.qmd 
+    
+    - imprint.qmd
+    
+format:
+  html:
+    css:
+      - files/www/custom.css
+    
+    theme:
+      - cosmo
+      - files/www/theme-green.scss
+  
+    toc: true
+    number-depth: 2
+    number-sections: false 
+    toc-title: "Content"
+    toc-location: right
+    fig-width: 7
+    fig-height: 5
+    fig-show: "hold"
+    code-link: true
+    author-meta: "Valerie Hase"
+
+#bibliography: 
+#  - files/digital-methods.bib
+#bibliographystyle: apa
+
+editor: visual

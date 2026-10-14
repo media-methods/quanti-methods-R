@@ -1,0 +1,68 @@
+﻿R-Function;Definition
+<-;assigns a value (e.g., a number or a dataset) to an object
+|>;the pipe, pushes data (left) through the pipe for transformation (right)
+::;uses a function from a specific package without loading the whole package (e.g., dplyr::select())
+$;accesses a single variable (column) of a data frame or tibble (e.g., data_woj$country)
+%in%;checks whether values are part of a set of values (e.g., work_experience %in% 1:5)
+? and help();help you to get more info on a specific function or package
+install.packages();installs packages on your machine - only has to be run once
+library();loads installed packages - has to be run every time you start a new R session
+sessionInfo();shows your R version, operating system and loaded packages (useful when asking for help)
+save.image();saves all objects in your current environment (workspace) to a file (e.g., .RData)
+c();combines several values into a vector
+list();combines different objects (of different types and lengths) into one list
+paste0();combines pieces of text without a separator
+round();rounds numbers to a specified number of digits
+mean();calculates the arithmetic mean (add na.rm = TRUE to ignore missing values)
+max();returns the largest value (add na.rm = TRUE to ignore missing values)
+sum();creates sums for a variable (for TRUE/FALSE values: counts how many are TRUE)
+class();check what type of data an object contains
+is.na();for every value in a variable, checks whether it contains missing data (TRUE) or not (FALSE)
+na_if();setting specific values to missing (NA)
+View();command to open and manually inspect data in the viewer
+head();show first rows (by default: six) of a dataset
+as_tibble();converts a data frame into a tibble
+glimpse();inspect the structure of a dataset (variables, data types, example values)
+nrow();get the number of rows for a dataset
+ncol();get the number of columns for a dataset
+read_csv(), read_csv2();read in tabular data from .csv files (read_csv2() for European-style files with semicolons)
+read_tsv(), read_delim();read in tab-separated files or files with a custom separator
+write_csv(), write_csv2();save a dataset as a .csv file
+select();select specific variables
+contains(), starts_with(), ends_with();selection helpers: select variables whose names contain, start with, or end with a specific string
+where();selection helper: select variables for which a function returns TRUE (e.g., where(is.numeric))
+filter();filter specific observations, often based on conditions
+arrange();arrange data in descending or ascending order
+desc();sorts data in descending order (used inside arrange())
+slice();select observations (rows) by their position (e.g., slice(1) keeps the first row)
+rename();rename variables (rename(new_name = old_name))
+mutate();create new variables or overwrite existing ones
+if_else();transform existing variables based on one condition (two possible outcomes)
+case_when();transform existing variables based on multiple conditions
+across();apply the same function to several variables
+summarise();creates summary statistics for a dataset
+group_by();groups a dataset based on a variable for subsequent analyses
+pivot_longer();reshapes data from wide to long format
+add_index();build mean/sum index from variables
+get_reliability();get internal consistency (e.g., Cronbach's alpha) for an index
+ggplot();creating a graph
+aes(x, y, fill, color, etc.);maps data to visual elements
+geom_bar();creates a bar chart of counts (number of observations per category)
+geom_col();creates a bar chart where bar heights are values from the data
+geom_line();creates a line graph connecting observations across x-values
+geom_point();creates a scatter plot using points
+geom_density();creates a smoothed curve of a numeric distribution
+geom_boxplot();creates a box plot showing a distribution
+geom_text();adds text labels (e.g., values) to a graph
+facet_wrap();splits a graph into separate panels
+labs();adds titles and labels to a graph
+scale_fill_manual();manually defines the fill colors of a graph
+theme_minimal(), theme_classic(), theme_light(), theme_bw();changes the design of your graph
+theme();adjusts individual design elements of a graph (e.g., legend position)
+ggsave();saves graphs as image files
+tab_frequencies();gives us specific descriptive statistics (e.g., counts, percentages)
+describe_cat();gives us specific descriptive statistics for categorical variables (e.g., mode)
+describe();gives us specific descriptive statistics for metric variables (e.g., mean, standard deviation)
+report();creates a report of descriptive statistics
+as.data.frame();converts an object (e.g., a report) into a data frame
+kable();creates a table based on input data

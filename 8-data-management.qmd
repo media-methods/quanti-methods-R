@@ -1,0 +1,245 @@
+---
+title: "8 Data management in R"
+---
+
+::: callout-note
+## 🎯 Learning goals
+
+After working through Tutorial 8, you'll be able to...
+
+-   **apply** functions for data import and export to get data into and out of R
+-   **apply** functions for data transformation
+:::
+
+## 1. Getting data into R
+
+Oftentimes, you may want to import data from outside of R into R (e.g., an Excel file, a PDF, an image, etc.).
+
+R provides functions for importing and exporting almost any file format. However, in statistical analysis, **tabular data** has long been the standard structure. In tabular data, information is organized in **rows and columns**: each row typically represents an observation (for example, a survey respondent) and each column represents a variable (for example, age, gender, or income). Columns may contain different **data types**, such as numeric, character (text), or logical values.
+
+Common tabular file formats include:
+
+-   CSV (comma-separated values): `.csv`
+-   TSV (tab-separated values): `.tsv`
+-   Text files with separators: `.txt`
+-   Excel spreadsheets: `.xlsx`
+-   SPSS datasets: `.sav`
+
+To import different file formats, the `tidyverse` provides a consistent family of functions.
+
+These functions follow the same naming convention: the prefix `read_` followed by the file format, such as `csv` or `tsv`. For example, `read_csv()` reads comma-separated files, while `read_tsv()` reads tab-separated files.
+
+Examples for related functions include:
+
+-   `read_csv()` for CSV files\
+-   `read_tsv()` for tab-separated files\
+-   `read_delim()` for custom separators\
+-   `read_table()` for general text tables
+
+In most cases, the `read_` functions only require the **file path** as an argument, written in quotation marks. If the file is located in a subfolder, the folder name is written before the file name, separated by a `/`. The output of the function must then be stored in an object.
+
+As an example, download the World of Journalism data set provided by the `tidycomm` package here: 📢 [Example data](data/data_woj.csv).
+
+**Make sure** to store this in the subfolder **data** in your R project. Otherwise, the following commands will not work!
+
+```{r,read, eval = TRUE, echo = TRUE, message=FALSE, warning=FALSE}
+library(tidyverse)
+data_woj_new <- read_csv2("data/data_woj.csv")
+```
+
+In this example, `"data/data_woj.csv"` refers to a file called `data_woj.csv` that is located inside the folder `data`. The imported dataset is stored in the object `data_woj_new`.
+
+## 2. Understanding data in R
+
+After loading a dataset into R, the next step is usually to **inspect its structure and contents**. This helps us understand what variables are available, what data types they have, and whether the dataset looks as expected. In the tidyverse workflow, several simple functions help us quickly explore a dataset.
+
+To display the dataset in the console, we can simply type the object name. If the dataset is large, R will only print the first rows and columns.
+
+```{r,check-1, eval = TRUE, echo = TRUE, message=FALSE}
+data_woj_new
+```
+
+Another convenient way to look at the first observations is the function `head()`, which shows the first six rows of a dataset.
+
+```{r,check-2, eval = TRUE, echo = TRUE, message=FALSE}
+head(data_woj_new)
+```
+
+To understand the **variables and their data types**, we can use `glimpse()` from the tidyverse. This function provides a compact overview of the dataset, including variable names, types, and example values.
+
+```{r,check-3, eval = TRUE, echo = TRUE, message=FALSE}
+glimpse(data_woj_new)
+```
+
+It is often useful to know how many **observations (rows)** and **variables (columns)** the dataset contains.
+
+```{r,check-4, eval = TRUE, echo = TRUE, message=FALSE}
+# Rows
+nrow(data_woj_new)
+
+# Columns
+ncol(data_woj_new)
+```
+
+## 3. Renaming variables
+
+When working with datasets, it is often useful to **rename variables**. Variable names in raw datasets may be unclear or inconsistent. Renaming variables can make the dataset easier to read and work with during analysis.
+
+In the tidyverse, variables can be renamed using the function `rename()`. The basic logic is:
+
+`rename(new_name = old_name)`
+
+This means that the new variable name is written on the left and the existing variable name on the right.
+
+For example, suppose we want to rename the variable `country` in the dataset `data_woj_new` to `respondent_country`:
+
+```{r, rename, eval = TRUE, echo = TRUE, message=FALSE}
+data_woj_new <- data_woj_new |>
+  rename(respondent_country = country)
+
+# Check result
+data_woj_new |>
+  head()
+```
+
+The result is assigned back to the dataset `data_woj_new`, so that the change is stored.
+
+## 4. Transforming data
+
+### 4.1 Handling missing values
+
+**Important**: You have already learned how to define missing values - see Tutorial 6. For repetition, this is how we would set specific values to missing (here the values for "Freelancers"):
+
+```{r,na-4, eval = TRUE, echo = TRUE, warning=F}
+# Redefine missing values
+data_woj_new <- data_woj_new |>
+  mutate(employment = na_if(employment, "Freelancer"))
+```
+
+### 4.2 Recoding variables
+
+**Important**: You have already learned how to recode variables - see Tutorial 5. For repetition, a tidyverse-style approach for recoding is to combine `mutate()` with:
+
+-   `if_else()` for simple two-category recodes
+-   `case_when()` for multiple conditions/categories
+
+For example, we can create a new, categorical variable `work_experience_cat` that describes whether respondents have 5, 10 or more years of work experience. Note that we use the `%in%` operator to define whether `work_experience` takes on a specific value (e.g., `1:5`, meaning 1, 2, 3, 4, or 5). All other values (here: respondents with missing values) are set to `NA`.
+
+```{r,mutate, eval = TRUE, echo = TRUE}
+data_woj_new <- data_woj_new |>
+  mutate(
+    work_experience_cat = case_when(
+      work_experience %in% 1:5 ~ "max. 5 years",
+      work_experience %in% 6:10 ~ "6 to 10 years",
+      work_experience > 10 ~ "more than 10 years",
+      TRUE ~ NA_character_))
+
+# Check result
+data_woj_new |>
+  select(work_experience, work_experience_cat) |>
+  head()
+```
+
+### 4.3 Building indices
+
+In many social science datasets, several variables measure different aspects of the same concept. For example, multiple survey questions may capture attitudes toward a topic such as ethical concerns. In such cases, it is often useful to combine these variables into a single index.
+
+A common approach is to create a mean index. A **mean index** combines multiple variables that measure the same concept by calculating the mean value across them.
+
+In `data_woj_new`, the variables `ethics_1` to `ethics_4` measure the degree to which journalists agree with ethical statements. How could we combine these to a mean index?
+
+The `tidycomm` package provides convenient functions to create indices directly within a tidyverse workflow. The function `add_index()` calculates an index from a set of variables and adds it to the dataset.
+
+The basic logic is:
+
+`add_index(new_index_name, variable_1, variable_2, variable_3, ...)`
+
+For agreement related to ethical statements, a mean index can be created as follows.
+
+```{r,index-1, eval = TRUE, echo = TRUE, warning=FALSE}
+library("tidycomm")
+data_woj_new <- data_woj_new |>
+  add_index(ethical_concerns, ethics_1, ethics_2, ethics_3, ethics_4)
+
+# check result
+data_woj_new |>
+  select(starts_with("ethic")) |>
+  head()
+```
+
+In this example, the variables `ethics_1` to `ethics_4` are averaged, and the resulting index is stored in a new variable called `ethical_concerns`. By assigning the result back to `data_woj_new`, the index becomes part of the dataset and can be used in further analyses.
+
+By default, `add_index()` calculates a mean index. If a sum index is desired instead, the argument `type = "sum"` can be added.
+
+Before using this index, it is often useful to check its **reliability**, which refers to the internal consistency of the indicators. In other words, reliability measures how strongly the items in an index are related to each other.
+
+A common measure of reliability is **Cronbach’s α (alpha)**. Higher values indicate stronger internal consistency among the items.
+
+As a rule of thumb:
+
+-   **α \> 0.7** is usually considered acceptable
+-   **α \> 0.8** indicates good reliability
+
+The tidycomm function `get_reliability()` calculates reliability statistics:
+
+```{r,index-2, eval = TRUE, echo = TRUE}
+data_woj_new |>
+  get_reliability(ethical_concerns)
+```
+
+The output provides Cronbach’s α along with descriptive information about the index and the variables included in it. In this case, Cronbach’s α is 0.61 and thus below 0.7, so we would conclude that the index is not reliable and we should not use it for further analysis.
+
+## 🤓 Smart Hacks
+
+::: {.callout-tip collapse="true"}
+## Smart Hack: CSV vs. CSV2 ?!
+
+There are two common types of CSV files that differ in how they represent **column separators and decimal marks**.
+
+In the **US-style format**, columns are separated by **commas** and decimals use a **dot**. In many **European formats**, however, decimals use a **comma**, so columns are separated by **semicolons** instead.
+
+Because of this difference, CSV files do not always load correctly on the first try. The tidyverse therefore provides two functions:
+
+-   `read_csv()` for US-style CSV files
+-   `read_csv2()` for European-style CSV files
+
+The same distinction applies when saving CSV files. If a file is intended to be opened in a European version of Excel, `write_csv2()` is usually the safer choice. Just try and see what works!
+:::
+
+## 💡 Take-Aways
+
+-   **import** tabular data: `read_csv()`, `read_csv2()`
+-   **inspect** datasets: `head()`, `glimpse()`, `nrow()`, `ncol()`
+-   **rename** variables: `rename()`
+-   **handle** missing values: `na_if()`
+-   **recode** variables: `mutate()`, `if_else()`, `case_when()`
+-   **build** indices from multiple items: `add_index()`
+-   **check** index reliability: `get_reliability()`
+
+## 🎲 Quiz
+
+:::: {.content-visible when-format="html"}
+{{< include "files/www/quiz_script.qmd" >}}
+
+::: {.callout-note icon="false"}
+## 🎲 Question 1
+
+**Which of the following statements about inspecting and transforming data are correct?**
+
+```{ojs}
+//| echo: false
+
+MC_data_management_1 = [
+  ["glimpse() provides an overview of variables and their data types.", "True"],
+  ["rename(new = old) renames a variable in a dataset.", "True"],
+  ["Cronbach’s α should always be exactly 1 to create a consistent index.", "False"],
+  ["na_if() removes rows from a dataset.", "False"]
+]
+
+viewof answers_data_management_1 = quizInput({
+  questions: MC_data_management_1,
+  options: ["True", "False"]
+})
+```
+:::
+::::

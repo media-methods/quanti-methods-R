@@ -1,0 +1,385 @@
+---
+title: "6 Data and object types"
+---
+
+::: callout-note
+## 🎯 Learning goals
+
+After working through Tutorial 6, you'll be able to...
+
+- explain and correctly apply types of data in R (e.g. numeric, character, NA)
+- explain and correctly apply objects in R (scalars, vectors, data frames, etc.)
+:::
+
+## 1. Types of data in R
+
+Data types describe **values**. In R, we will most often encounter the following types of data:
+
+| Data type | Description | Example |
+|------------------------|------------------------|------------------------|
+| numeric | numbers used for calculations | `c(1, 2, 3)` |
+| character | text strings | `c("Green", "Yellow", "Blue")` |
+| factor | categorical variable with specific levels | `education = factor(education, levels = c("low", "medium", "high"))` |
+| logical | logical values | `TRUE`, `FALSE` |
+| NA | missing value | `NA` |
+
+You can check a variable’s type using `class()`.
+
+```{r,type-1, eval = TRUE, echo = TRUE}
+c(1, 2, 3) |>
+  class()
+
+c("Green", "Yellow", "Blue") |>
+  class()
+```
+
+Why do different data types matter? Many statistical functions require numeric input. Try, for example, to calculate the mean of the following numbers:
+
+```{r,text_form4, eval = TRUE, echo = TRUE}
+c("1", "2", "3") |>
+  mean()
+```
+
+R does not calculate the mean, but returns `NA` together with a warning message. Why? Because the values are stored as character strings, not as numeric values. Once we store them as numbers, it works:
+
+```{r,text_form5, eval = TRUE, echo = TRUE}
+c(1, 2, 3) |>
+  mean()
+```
+
+### 1.1 Making character data explicit
+
+Character data requires quotation marks `"` to be recognized as such. See the difference here:
+
+```{r,type-2, eval = TRUE, echo = TRUE}
+c(1, 2, 3) |>
+  class()
+
+c("1", "2", "3") |>
+  class()
+```
+
+### 1.2 Missing values
+
+Missing values are stored as `NA`. You should always check whether values are missing (and of course, why).
+
+Let's check an example: We will again use the `WoJ` dataset. It contains a quantitative survey of N = 1,200 journalists from five countries, collected via the World of Journalism study. The data is provided via the [`tidycomm`](https://cran.r-project.org/web/packages/tidycomm/index.html) package developed by Unkel et al.
+
+First, we retrieve the data and save it as an object named `data_woj`. Next, we count how many missing values exist in the variable `work_experience`. For this, we use three functions:
+
+- `summarise()`: reduces a dataset to a summary by computing statistics (for example counts or averages).
+- `sum()`: adds values together. When used with logical values (`TRUE` / `FALSE`), it counts how many `TRUE` values exist - in this case, how many values are missing.
+- `is.na()`: checks whether values are missing and returns `TRUE` for missing values and `FALSE` otherwise.
+
+```{r,na, eval = TRUE, echo = TRUE, warning=F, message=F}
+library(tidyverse)
+library(tidycomm)
+
+data_woj <- tidycomm::WoJ
+data_woj |>
+  summarise(n_missing = sum(is.na(work_experience)))
+```
+
+Many functions for calculations (e.g., `mean()`, `sum()`, or `max()`) allow handling missing values explicitly, using the `na.rm` argument: Set it to `TRUE` if missing values (`na`) should be removed (`rm`) before calculating.
+
+```{r,na-2, eval = TRUE, echo = TRUE, warning=F}
+data_woj |>
+  summarise(mean = mean(work_experience, na.rm = TRUE))
+```
+
+Now, imagine that you want to set specific values to `NA`. For example, we may want to set the value `Freelancer` in `employment` to missing. For this, we can use `mutate()`, which we already know from previous tutorials, and `na_if()`:
+
+```{r,na-3, eval = TRUE, echo = TRUE, warning=F}
+# Original data
+data_woj |>
+  head()
+```
+
+```{r,na-4, eval = TRUE, echo = TRUE, warning=F}
+# Redefine missing values
+data_woj |>
+  mutate(employment = na_if(employment, "Freelancer")) |>
+  head()
+```
+
+## 2. Types of objects in R
+
+Great, now you know all about types of data. While data types describe **values**, object types describe **how values are stored**.
+
+As promised, this tutorial will also teach you about different types of objects:
+
+| Object | Description | Example |
+|------------------------|------------------------|------------------------|
+| scalar | single value | `3` |
+| vector | multiple values of same type | `c(1, 2)` |
+| tibble/data frame | collection of vectors | `WoJ` |
+| list | collection of different objects | `list(number = c(1,2), text = "word")` |
+| functions | a command that is to be computed | `select()` |
+
+### 2.1 Scalar
+
+The "smallest" type of data you will encounter are scalars.
+
+> **Scalars are objects consisting of a single value - for example, a letter, a word, a sentence, a number, etc.**
+
+You've already seen what a scalar looks like - remember when we started with R? Here, we defined an object `word` which only consisted of the word "hello".
+
+```{r,scalar1, eval = TRUE, echo = TRUE}
+word <- "hello"
+word
+```
+
+Technically, scalars are vectors of length 1.
+
+### 2.2 Vector
+
+The next type of data you should know are vectors: Vectors contain multiple values of the same type. In tidyverse thinking:
+
+> **Each column in a tibble is a vector.**
+
+A vector can only have one underlying type (e.g., numeric or character).
+
+In principle, you can often (but not always) compare vectors with variables in data sets: They contain values for all observations in your data set (with all of these values being of the same data type).
+
+You have already created vectors with `c()` (short for *combine*), which combines several values into one vector. Another quick way of creating a numeric vector is the `:` operator.
+
+We define the object `numbers` to consist of a vector which contains the values 1 to 20.
+
+```{r,vector1, eval = TRUE, echo = TRUE}
+numbers <- 1:20
+numbers
+```
+
+### 2.3 Tibble/Data frame
+
+We already know tibbles:
+
+> **A tibble (or a data frame) combines several vectors of equal length.**
+
+Our `data_woj` data set from `tidycomm` is an example for this:
+
+```{r,visualize_dataframe, eval = TRUE, echo = TRUE}
+data_woj
+```
+
+For a nice example for comparing scalars, vectors, and other data types check out this example [here](https://bookdown.org/ndphillips/YaRrr/what-are-matrices-and-dataframes.html).
+
+In R, we can access variables inside tibbles with the dollar sign `$`:
+
+```{r, dollar, eval = FALSE, echo = TRUE}
+data_woj$country
+```
+
+We can manually inspect the whole data frame using `View()`:
+
+```{r, viewing, eval = FALSE, echo = TRUE}
+View(data_woj)
+```
+
+### 2.4 Lists
+
+Finally lists:
+
+> **Lists can store different object types of different lengths together.**
+
+As discussed, tibbles can include vectors consisting of different types of data (for instance, character and numeric vectors) but always of the same length.
+
+In some cases, lists offer a more flexible way of saving very different objects within *one* object (i.e., the list).
+
+Let's check this example for a list:
+
+```{r,list, eval = FALSE, echo = TRUE}
+list(data = data_woj,
+     numbers = c(1,2,3),
+     text = "example")
+```
+
+As you see, the object includes three elements:
+
+- the first element `$data` is the tibble `data_woj`
+- the second element `$numbers` is the numeric vector `numbers`
+- the third element `$text` is the character scalar `text`
+
+## 💡 Take-Aways
+
+- **Types of data**: describe what values are (numeric, character, factor, logical).
+- **Types of objects**: describe how values are organized (vectors, tibbles, lists).
+
+## 🤓 Smart Hacks
+
+::: {.callout-tip collapse="true"}
+## Smart Hack 1: Using `across()` to repeat operations over columns
+
+When working with tibbles, you often want to apply the same operation to multiple variables at once. Instead of repeating the same command, you can use `across()`.
+
+`across()` allows you to apply one function (or several functions) to multiple columns simultaneously.
+
+Suppose we want to transform all character variables to uppercase. We can do this like so:
+
+```{r,hack, eval = TRUE, echo = TRUE}
+data_woj |>
+  mutate(across(where(is.character), toupper)) |>
+  head()
+```
+:::
+
+## 🎲 Quiz
+
+:::::: {.content-visible when-format="html"}
+{{< include "files/www/quiz_script.qmd" >}}
+
+::: {.callout-note icon="false"}
+## 🎲 Question 1
+
+**Which of the following statements are correct?**
+
+```{ojs}
+//| echo: false
+
+MC_datatypes_1 = [
+  ["Numeric data can be used directly for mathematical calculations.", "True"],
+  ["Character values are recognized without quotation marks.", "False"],
+  ["TRUE and FALSE belong to the logical data type.", "True"],
+  ["NA represents a missing value.", "True"],
+  ["c(\"1\", \"2\") is stored as numeric data.", "False"]
+]
+
+viewof answers_datatypes_1 = quizInput({
+  questions: MC_datatypes_1,
+  options: ["True", "False"]
+})
+```
+:::
+
+::: {.callout-note icon="false"}
+## 🎲 Question 2
+
+**Which of the following statements about missing data are correct?**
+
+```{ojs}
+//| echo: false
+
+MC_missing_1 = [
+  ["I do not need to check for missing values - R can handle this automatically", "False"],
+  ["is.na() checks whether values are missing.", "True"],
+  ["sum(is.na(x)) counts how many missing values exist.", "True"],
+  ["Setting na.rm = TRUE tells R to ignore missing values in calculations.", "True"]
+]
+
+viewof answers_missing_1 = quizInput({
+  questions: MC_missing_1,
+  options: ["True", "False"]
+})
+```
+:::
+
+::: {.callout-note icon="false"}
+## 🎲 Question 3
+
+**You want to set all values in `ethics_1` coded as "3" to "NA". Type in the correct command!**
+
+```{ojs}
+//| echo: false
+
+TRT_6_1 = [
+  `data_woj |>
+        mutate(ethics_1 = {{input}}(ethics_1, 3))`,
+  "Code",
+  "na_if",
+  "monospace",
+  "#000000"
+];
+
+viewof answer_TRT_6_1 = textReplacementWithText({
+  text: TRT_6_1[0],
+  placeholder: TRT_6_1[1],
+  correctText: TRT_6_1[2],
+  fontFamily: TRT_6_1[3],
+  color: TRT_6_1[4]
+});
+```
+:::
+
+## 📚 More tutorials on this
+
+You still have questions? The following tutorials & papers can help you with that:
+
+- [Objekte und Syntax by M. Wettstein - OLAT course for UZH students](https://lms.uzh.ch/auth/RepositoryEntry/16703095365/CourseNode/100872608858095)
+- [SICSS Boot Camp by C. Bail, Video 2](https://sicss.io/boot_camp#install)
+- [YaRrr! The Pirate's Guide to R by N.D.Phillips, Tutorials 4, 5, 7 and 8](https://bookdown.org/ndphillips/YaRrr/scalersvectors.html)
+- [Computational Methods in der politischen Kommunikationsforschung by J. Unkel, Tutorial 2](https://bookdown.org/joone/ComputationalMethods/objekte-und-datenstrukturen.html)
+- [R Cookbook by Long et al., Tutorial 5](https://rc2e.com/datastructures)
+
+## 📌 Test your knowledge
+
+### Task 1 (Easy🔥)
+
+Use the `WoJ` data. Save it as `data_woj`. Check the data type of the following variables:
+
+- `country`
+- `employment`
+
+```{r, task-1, eval = FALSE, echo = FALSE}
+data_woj  |>
+  select(country, employment) |>
+  head()
+
+# or.... 
+
+data_woj |> 
+  summarise(across(c("country", "employment"), class))
+```
+
+### Task 2 (Medium🔥🔥)
+
+Using `data_woj`...
+
+- Count how many missing values exist in `work_experience`.
+- Replace all values coded as more than 15 in `work_experience` with NA.
+- Save the modified dataset as `data_woj_clean`.
+
+```{r, task-2a, eval = FALSE, echo = FALSE}
+# How many missing values?
+data_woj |>
+  summarise(n_missing = sum(is.na(work_experience)))
+```
+
+```{r, task-2b, eval = FALSE, echo = FALSE}
+# Replace values above 15 with NA
+data_woj_clean <- data_woj |>
+  mutate(work_experience = replace(work_experience,
+                                   work_experience > 15,
+                                   NA)) 
+
+# Check result
+data_woj_clean |>
+  select(work_experience)
+```
+
+### Task 3 (Hard🔥🔥🔥)
+
+This task contains several commands you do not yet know! Use `data_woj` (not the cleaned data set) and ...
+
+- Group the data by country.
+- For all numeric variables, calculate the mean and the number of missing values.
+- Save the result as `country_summary`.
+- For the country with the highest mean in `trust_parliament`, plot the average trust score!
+
+```{r, task-3, eval = FALSE, echo = FALSE}
+country_summary <- data_woj |>
+  group_by(country) |>
+  summarise(across(where(is.numeric), list(mean = ~ mean(.x, na.rm = TRUE),
+                                           n_miss = ~ sum(is.na(.x)))))
+
+# Check the result
+country_summary
+
+# For the country with the highest mean in `trust_parliament`, plot the average trust score!
+country_summary |>
+  filter(trust_parliament_mean == max(trust_parliament_mean)) |>
+  
+  # a very simple plot
+  ggplot(aes(x = country, y = trust_parliament_mean)) +
+  geom_col()
+```
+::::::

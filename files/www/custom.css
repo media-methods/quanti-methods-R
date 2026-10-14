@@ -1,0 +1,66 @@
+/* colour palette (dark green) - change here to re-colour the whole site */
+:root {
+  --course-green: #1E5631;
+  --course-green-dark: #143D22;
+  --course-green-light: #E7F1EA;
+}
+
+/* links in main content only */
+main a {
+  color: var(--course-green);
+}
+
+main a:hover {
+  color: var(--course-green-dark);
+}
+
+/* H1 headings inside main content */
+#quarto-document-content h1 {
+  color: var(--course-green);
+}
+
+/* H2 headings inside main content */
+#quarto-document-content h2 {
+  color: var(--course-green);
+}
+
+#quarto-document-content h3 {
+  font-size: 1.1em;
+}
+
+/* sidebar chapter links */
+#quarto-sidebar .sidebar-navigation .sidebar-item .sidebar-link {
+  color: var(--course-green) !important;
+}
+
+/* hover */
+#quarto-sidebar .sidebar-navigation .sidebar-item .sidebar-link:hover {
+  color: var(--course-green-dark) !important;
+}
+
+/* Right TOC: normal links */
+#TOC a {
+  color: #444 !important;
+}
+
+/* Right TOC: hover */
+#TOC a:hover {
+  color: var(--course-green) !important;
+}
+
+/* Right TOC: active section (most robust) */
+#TOC a[aria-current="true"],
+#TOC .active > a,
+#TOC a.active {
+  color: var(--course-green) !important;
+  font-weight: 600;
+}
+
+/* Optional: active background highlight */
+#TOC a[aria-current="true"],
+#TOC .active > a,
+#TOC a.active {
+  background-color: var(--course-green-light);
+  border-radius: 6px;
+  padding-left: 6px;
+}

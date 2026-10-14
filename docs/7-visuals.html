@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Valerie Hase">
+<meta name="description" content="Data cleaning, management, analysis, and reporting with R">
+
+<title>7 Creating visuals with ggplot – Quantitative Methods with R</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./8-data-management.html" rel="next">
+<link href="./6-data-types.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-11f3c4d3876d633e5b7b3276b3b6b9df.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="files/www/custom.css">
+<link rel="stylesheet" href="ache-refresh">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./6-data-types.html">Handling data in R</a></li><li class="breadcrumb-item"><a href="./7-visuals.html"><span class="chapter-title">7 Creating visuals with ggplot</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Quantitative Methods with R</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">R Basics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1-install-r.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 Install R/R Studio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2-overview.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 What to do where in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3-workflow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 Workflow in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./4-coding-style.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 Good coding practice</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5-the-tidyverse.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 The tidyverse</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Handling data in R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./6-data-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 Data and object types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./7-visuals.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">7 Creating visuals with ggplot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./8-data-management.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 Data management in R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Statistics in R</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./80-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Appendix</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./81-glossary.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">🟢 Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./83-faq-r.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">🟢 FAQ R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./imprint.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Legal Notice / Contact</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Content</h2>
+   
+  <ul>
+  <li><a href="#the-basic-logic-of-ggplot2" id="toc-the-basic-logic-of-ggplot2" class="nav-link active" data-scroll-target="#the-basic-logic-of-ggplot2">1. The basic logic of ggplot2</a></li>
+  <li><a href="#lets-do-it-recreating-a-graph" id="toc-lets-do-it-recreating-a-graph" class="nav-link" data-scroll-target="#lets-do-it-recreating-a-graph">2. Let’s do it: Recreating a graph!</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">3. Data</a></li>
+  <li><a href="#aesthetics" id="toc-aesthetics" class="nav-link" data-scroll-target="#aesthetics">4. Aesthetics</a></li>
+  <li><a href="#geoms" id="toc-geoms" class="nav-link" data-scroll-target="#geoms">5. Geoms</a></li>
+  <li><a href="#facets" id="toc-facets" class="nav-link" data-scroll-target="#facets">6. Facets</a></li>
+  <li><a href="#labels-and-titles" id="toc-labels-and-titles" class="nav-link" data-scroll-target="#labels-and-titles">7. Labels and titles</a></li>
+  <li><a href="#themes" id="toc-themes" class="nav-link" data-scroll-target="#themes">8. Themes</a></li>
+  <li><a href="#colors" id="toc-colors" class="nav-link" data-scroll-target="#colors">9. Colors</a></li>
+  <li><a href="#saving-images" id="toc-saving-images" class="nav-link" data-scroll-target="#saving-images">10. Saving images</a></li>
+  <li><a href="#take-aways" id="toc-take-aways" class="nav-link" data-scroll-target="#take-aways">💡 Take-Aways</a></li>
+  <li><a href="#quiz" id="toc-quiz" class="nav-link" data-scroll-target="#quiz">🎲 Quiz</a></li>
+  <li><a href="#more-tutorials-on-this" id="toc-more-tutorials-on-this" class="nav-link" data-scroll-target="#more-tutorials-on-this">📚 More tutorials on this</a></li>
+  <li><a href="#test-your-knowledge" id="toc-test-your-knowledge" class="nav-link" data-scroll-target="#test-your-knowledge">📌 Test your knowledge</a>
+  <ul class="collapse">
+  <li><a href="#task-1-easy" id="toc-task-1-easy" class="nav-link" data-scroll-target="#task-1-easy">Task 1 (Easy🔥)</a></li>
+  <li><a href="#task-2-medium" id="toc-task-2-medium" class="nav-link" data-scroll-target="#task-2-medium">Task 2 (Medium🔥🔥)</a></li>
+  <li><a href="#task-3-hard" id="toc-task-3-hard" class="nav-link" data-scroll-target="#task-3-hard">Task 3 (Hard🔥🔥🔥)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./6-data-types.html">Handling data in R</a></li><li class="breadcrumb-item"><a href="./7-visuals.html"><span class="chapter-title">7 Creating visuals with ggplot</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">7 Creating visuals with ggplot</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>🎯 Learning goals
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>After working through Tutorial 7, you’ll be able to…</p>
+<ul>
+<li>Produce nice visuals using <code>ggplot()</code></li>
+</ul>
+</div>
+</div>
+<section id="the-basic-logic-of-ggplot2" class="level2">
+<h2 class="anchored" data-anchor-id="the-basic-logic-of-ggplot2">1. The basic logic of ggplot2</h2>
+<p>In this tutorial, we’ll work with the <a href="https://cran.r-project.org/web/packages/ggplot2/index.html"><code>ggplot2</code> package</a>. The package is part of the <a href="https://www.tidyverse.org/">tidyverse</a>.</p>
+<p>To create visuals, <code>ggplot2</code> follows what is called the “Grammar of Graphics”. You provide the raw data to R and then build the graph step by step by adding different layers (e.g., colors, labels) to it. This way, you can easily customize visualizations in R.</p>
+<p>“A graphic maps the <strong>data</strong> to the <strong>aesthetic</strong> attributes (colour, shape, size) of <strong>geometric</strong> objects (points, lines, bars).” <a href="https://ggplot2-book.org/introduction.html">Wickham et al., 2021, no page; bold words inserted by author</a></p>
+<p>This is, indeed, a very brief description of what is possible with <code>ggplot2</code>. In short, you <strong>have to</strong> specify the following three components to create a graph with the <code>ggplot()</code> command:</p>
+<ul>
+<li><p><strong>data</strong>, i.e., the data that should be visualized<br>
+</p></li>
+<li><p><strong>aesthetics</strong>, i.e., which data (for instance variables) should be mapped to which visual elements using <em>aes()</em><br>
+</p></li>
+<li><p><strong>geoms</strong>, i.e., the type of graphical representation that should be created<br>
+However, you <strong>can</strong> specify many more details, for instance the…</p></li>
+<li><p><strong>scales</strong> of your graph, for example how the x- and y-axes should be displayed and scaled<br>
+</p></li>
+<li><p><strong>themes</strong> of your graph, for example by using predefined sets of backgrounds and formatting options</p></li>
+</ul>
+<p>Before doing anything else, install the <code>ggplot2</code> package and load it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Important</strong>:</p>
+<p>In this tutorial, I will only introduce the very basics of visualizing data in R.</p>
+<p>The goal is for you to become proficient enough to create basic graphs using R (instead of SPSS or Excel). However, please be aware that there are many, many more options for visualizing data.</p>
+<p>If you have further questions about visualizing data in R, the following two tutorials/guides are excellent resources:</p>
+<ul>
+<li>Chang, W. (2018). <em>R Graphics Cookbook: Practical Recipes for Visualizing Data</em> (2nd ed.). <a href="https://r-graphics.org/">Link</a></li>
+<li>Wickham, H. et al.&nbsp;(2021). <em>ggplot2: Elegant Graphics for Data Analysis.</em> Online work-in-progress version of the 3rd edition. <a href="https://ggplot2-book.org/">Link</a></li>
+</ul>
+</section>
+<section id="lets-do-it-recreating-a-graph" class="level2">
+<h2 class="anchored" data-anchor-id="lets-do-it-recreating-a-graph">2. Let’s do it: Recreating a graph!</h2>
+<p>Our goal for today: We want to reproduce the following graph which visualizes the distribution of journalists’ work experience (in years) for each country, using the <code>WoJ</code> dataset.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/ggplot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">3. Data</h2>
+<p>Let’s start with the most basic step: getting the data and telling R which data to use to create a graph with <code>ggplot()</code>.</p>
+<p>We will again use the <code>WoJ</code> dataset. It contains quantitative survey data from N = 1,200 journalists in five countries, collected as part of the World of Journalism Study.</p>
+<p>First, we retrieve the data and save it as an object named <code>data_woj</code>. Make sure to have the <code>tidycomm</code> and <code>tidyverse</code> packages installed before running this command!</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we load the necessary packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycomm)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># loads the WoJ dataset shipped with tidycomm</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>data_woj <span class="ot">&lt;-</span> tidycomm<span class="sc">::</span>WoJ</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># we inspect the data</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 15
+  country    reach employment temp_contract autonomy_selection autonomy_emphasis
+  &lt;fct&gt;      &lt;fct&gt; &lt;chr&gt;      &lt;fct&gt;                      &lt;dbl&gt;             &lt;dbl&gt;
+1 Germany    Nati… Full-time  Permanent                      5                 4
+2 Germany    Nati… Full-time  Permanent                      3                 4
+3 Switzerla… Regi… Full-time  Permanent                      4                 4
+4 Switzerla… Local Part-time  Permanent                      4                 5
+5 Austria    Nati… Part-time  Permanent                      4                 4
+6 Switzerla… Local Freelancer &lt;NA&gt;                           4                 4
+# ℹ 9 more variables: ethics_1 &lt;dbl&gt;, ethics_2 &lt;dbl&gt;, ethics_3 &lt;dbl&gt;,
+#   ethics_4 &lt;dbl&gt;, work_experience &lt;dbl&gt;, trust_parliament &lt;dbl&gt;,
+#   trust_government &lt;dbl&gt;, trust_parties &lt;dbl&gt;, trust_politicians &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Now, we need to tell R to use this data. Specifying the data is a <strong>necessary</strong> part of the <code>ggplot()</code> function, meaning that you <strong>have to</strong> tell R which data to use.</p>
+<p>Here, we want to plot the distribution of journalists’ work experience across countries.</p>
+<p>We’ll start by plotting this data by simply handing the dataset <code>data_woj</code> over to the <code>ggplot()</code> function.</p>
+<p>Note that, using the <code>filter()</code> command, we first remove all observations with missing values (<code>NA</code>s) for <code>work_experience</code>, as these cannot be plotted.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/data-gg-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As a result, we see that not much has happened: R does not give us an error message, but only creates an “empty” graph.</p>
+<p>The reason is that we have not yet specified which variables should be visualized and how (i.e., the other two necessary components for creating a graph).</p>
+</section>
+<section id="aesthetics" class="level2">
+<h2 class="anchored" data-anchor-id="aesthetics">4. Aesthetics</h2>
+<p>Next, we need to specify the aesthetics component.</p>
+<p>This is a <strong>necessary</strong> component, meaning that you <strong>have to</strong> tell R which data (for instance variables) should be mapped to which visual elements using <code>aes()</code>.</p>
+<p>In <code>aes()</code>, you can, for instance, pass values to the following arguments:</p>
+<ul>
+<li><code>x</code>: the variable that should be mapped to the x-axis</li>
+<li><code>fill</code>: the variable that should be used for filling a geometric object with a specific color</li>
+</ul>
+<p>(and many more, but these are the elements we need here).</p>
+<p>Let’s define the aesthetics for our plot:</p>
+<ul>
+<li><p>We want the x-axis to show journalists’ <code>work experience</code> in years. Thus, we set <code>x = work_experience</code> in <code>aes()</code>.</p></li>
+<li><p>We also want the different countries to be represented by different colors. Thus, we set <code>fill = country</code> in <code>aes()</code>.</p></li>
+</ul>
+<p>If we run the following command, R now knows which variable should be mapped to the x-axis and which variable should determine the fill color. You can see that R already adjusted the labels on the axes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># NEW: we add variables</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/aesthetics-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>However, the graph still does not show the final result yet. The reason is that we have not fully specified the graphical representation. In addition to the data and aesthetics, we still need to define the <code>geom</code>, that is, the type of graph that should be created.</p>
+</section>
+<section id="geoms" class="level2">
+<h2 class="anchored" data-anchor-id="geoms">5. Geoms</h2>
+<p>Lastly, we need to define the geometric component as the last <strong>necessary</strong> component: you <strong>have to</strong> tell R which type of graph should be created.</p>
+<p>You can, for instance, use the following commands to create different graphs (simply type <code>geom_</code> in the script, and RStudio will automatically propose many options), including:</p>
+<ul>
+<li><code>geom_bar()</code> to create a bar chart</li>
+<li><code>geom_line()</code> to create a line graph</li>
+<li><code>geom_point()</code> to create a scatter plot</li>
+<li><code>geom_boxplot()</code> to create a box plot</li>
+</ul>
+<p>(and many more, but these are the ones we’ll cover in this tutorial).</p>
+<p>Here, we want to create a density plot using the <code>geom_density()</code> function.</p>
+<p>In short, this function plots a density estimate, that is, a smoothed representation of the distribution of a numeric variable. In our case, it helps us see where values of <code>work_experience</code> are concentrated and how the distribution differs across countries.</p>
+<p>We simply add the graph we want to create, here <code>geom_density()</code>, to our function as a new layer using the <code>+</code> sign.</p>
+<p>The argument <code>alpha</code> controls the transparency of the color used to fill the density curves. The value ranges from 0 (completely transparent) to 1 (completely opaque).</p>
+<p>Here, we set <code>alpha = 0.6</code>, meaning the colors are slightly transparent. This makes the plot easier to read when multiple graphical elements overlap.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function and add variables</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">## NEW: add the geometric component</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/t8.10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Great: this worked! We have now created the first complete graph for our data.</p>
+<p>At this stage, the plot already shows the distribution of journalists’ work experience. In the next step, we no longer make <strong>necessary</strong> decisions (i.e., to create a graph) but <strong>optional ones</strong>, meaning those “only” intended to make the graph nicer.</p>
+<p>Here, we can further improve it by splitting the graph into separate panels for each country and by adding titles and a note.</p>
+</section>
+<section id="facets" class="level2">
+<h2 class="anchored" data-anchor-id="facets">6. Facets</h2>
+<p>Next, we want to improve the readability of our graph by creating separate panels for each country.</p>
+<p>In <code>ggplot2</code>, this can be done using the concept of <strong>faceting</strong>. Faceting means that the data are split according to the values of a variable and displayed in separate subplots.</p>
+<p>This is particularly useful when comparing distributions across groups.</p>
+<p>To create facets in <code>ggplot2</code>, we can use the function <code>facet_wrap()</code>.</p>
+<p>In our case, we want to create one panel for each country. Thus, we pass the variable <code>country</code> to the function.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function and add variables</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the geometric component</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># NEW: we create separate panels for each country</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>country)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/facets-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As a result, the graph is now split into several panels, one for each country.</p>
+<p>This makes it easier to compare the distributions of journalists’ work experience across countries, as each country is displayed in its own subplot.</p>
+<p>Note that the <code>~</code> symbol indicates that the variable <code>country</code> should be used to create the facets.</p>
+<p>In the next step, we will further improve the presentation of the graph by adding titles, axis labels, and a note explaining how the density values should be interpreted.</p>
+</section>
+<section id="labels-and-titles" class="level2">
+<h2 class="anchored" data-anchor-id="labels-and-titles">7. Labels and titles</h2>
+<p>You can add titles and labels to make your graph more informative.</p>
+<p>For example, you can change:</p>
+<ul>
+<li>the scaling of axes</li>
+<li>the titles of axes</li>
+<li>the title of the graph</li>
+<li>the colors used in the plot</li>
+<li>captions or notes explaining the graph</li>
+</ul>
+<p>In this tutorial, we will mainly focus on improving the <strong>labels and titles</strong> of our graph.</p>
+<p>We will now assign our graph a clear title. We will also change the titles for the x- and y-axes.</p>
+<p>You should <strong>always</strong> assign clear titles to graphs, axes, and legends so readers understand what type of data the graph visualizes and which variables are shown.</p>
+<p>We can add a title for the graph and both axes using the <code>labs()</code> command.</p>
+<p>Here, we assign the graph the <code>title</code> <em>Distribution of Journalists’ Work Experience by Country</em>. We also label the x-axis <code>x</code> <em>Work Experience (Years)</em> and the y-axis <code>y</code> <em>Density</em>.</p>
+<p>Finally, we add a short note explaining how the density values should be interpreted using <code>caption</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function and add variables</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the geometric component</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we create separate panels for each country</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>country) <span class="sc">+</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># NEW we add graph and axis titles</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Journalists' Work Experience by Country"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Work Experience (Years)"</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Note: Higher parts of the curve mean that many observations occur around that value."</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/scales-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="themes" class="level2">
+<h2 class="anchored" data-anchor-id="themes">8. Themes</h2>
+<p>Another way to improve the appearance of a graph is by adjusting its <strong>theme</strong>.</p>
+<p>Themes control the <strong>visual style</strong> of a graph. While scales determine how data are displayed (for example axis labels or colors), themes determine the overall formatting of the plot.</p>
+<p>With themes, you can change elements such as:</p>
+<ul>
+<li>the background of the graph<br>
+</li>
+<li>grid lines<br>
+</li>
+<li>font size of axis labels and titles<br>
+</li>
+<li>the appearance and position of the legend</li>
+</ul>
+<p><code>ggplot2</code> already provides several predefined themes that you can easily apply. You can see an overview of available themes <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">here</a>.</p>
+<p>Some commonly used examples are:</p>
+<ul>
+<li><code>theme_minimal()</code> – a clean design with very little visual clutter<br>
+</li>
+<li><code>theme_classic()</code> – a style similar to traditional statistical graphics<br>
+</li>
+<li><code>theme_bw()</code> – a black-and-white theme often used for publications</li>
+</ul>
+<p>If you type <code>theme_</code> in your script and wait for RStudio to auto-complete your search, you will see several options. To apply a theme, you simply add it as another layer using the <code>+</code> operator.</p>
+<p>For instance, the light theme <code>theme_light()</code> creates a plot with a white background and light grid lines, which can make the graph easier to read.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function and add variables</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the geometric component</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we create separate panels for each country</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>country) <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add graph and axis titles</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Journalists' Work Experience by Country"</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Work Experience (Years)"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Note: Higher parts of the curve mean that many observations occur around that value."</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># NEW: we add the light theme</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/theme-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here, we use <code>theme_minimal()</code> to create a clean and simple background.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function and add variables</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the geometric component</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we create separate panels for each country</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>country) <span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add graph and axis titles</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Journalists' Work Experience by Country"</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Work Experience (Years)"</span>,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Note: Higher parts of the curve mean that many observations occur around that value."</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># NEW: we add the minimal theme</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/theme-1b-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As you can see, changing the theme does not affect the data or the structure of the graph. It only changes how the graph is visually presented.</p>
+</section>
+<section id="colors" class="level2">
+<h2 class="anchored" data-anchor-id="colors">9. Colors</h2>
+<p>Another way to improve the readability of a graph is by adjusting the <strong>colors</strong> used in the visualization.</p>
+<p>Colors can help readers quickly distinguish between groups or categories in the data. In <code>ggplot2</code>, colors are usually assigned through the aesthetics we defined earlier.</p>
+<p>For example:</p>
+<ul>
+<li><code>color</code> controls the color of lines or points<br>
+</li>
+<li><code>fill</code> controls the interior color of objects such as bars, boxes, or density curves</li>
+</ul>
+<p>In our example, we already mapped the variable <code>country</code> to the argument <code>fill</code> inside <code>aes()</code>. This means that <code>ggplot2</code> automatically assigns different colors to each country.</p>
+<p>However, you can also manually specify which colors should be used.</p>
+<p>For instance, the function <code>scale_fill_manual()</code> allows you to define specific colors for each category.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function and add variables</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the geometric component</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we create separate panels for each country</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>country) <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add graph and axis titles</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Journalists' Work Experience by Country"</span>,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Work Experience (Years)"</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Note: Higher parts of the curve mean that many observations occur around that value."</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the minimal theme</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># NEW: we manually define colors</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Germany"</span> <span class="ot">=</span> <span class="st">"#1b9e77"</span>,</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Austria"</span> <span class="ot">=</span> <span class="st">"#d95f02"</span>,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Denmark"</span> <span class="ot">=</span> <span class="st">"#7570b3"</span>,</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"UK"</span> <span class="ot">=</span> <span class="st">"#e7298a"</span>,</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Switzerland"</span> <span class="ot">=</span> <span class="st">"#66a61e"</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/colors-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There are a lot of different colors in R, as you can for instance see in <a href="https://r-charts.com/colors/">this overview</a>. Moreover, there are nice color palettes including a range of colors that work well together for data visualization, as you can see in <a href="https://www.datanovia.com/en/blog/the-a-z-of-rcolorbrewer-palette/">this overview</a>. Of particular popularity here is, for example, the <a href="https://cran.r-project.org/web/packages/RColorBrewer/index.html">RColorBrewer package</a> offering some really nice palettes for visualization.</p>
+<p>That’s it - we have recreated our graph, nice work!</p>
+</section>
+<section id="saving-images" class="level2">
+<h2 class="anchored" data-anchor-id="saving-images">10. Saving images</h2>
+<p>Lastly, you may want to save your graph externally so that you can later use the image in reports, presentations, or seminar papers.</p>
+<p>In <code>ggplot2</code>, this can be done with the function <code>ggsave()</code>.</p>
+<p>A common workflow is to first save the plot in an object and then export it as an image file.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plot_woj <span class="ot">&lt;-</span> data_woj <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we remove missing values for work_experience</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we hand over the data to the function and add variables</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the geometric component</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we create separate panels for each country</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>country) <span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add graph and axis titles</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Journalists' Work Experience by Country"</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Work Experience (Years)"</span>,</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Note: The density value shows where the observations are concentrated. Higher parts of the curve mean that many observations occur around that value."</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we add the minimal theme</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we manually define colors</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Germany"</span> <span class="ot">=</span> <span class="st">"#1b9e77"</span>,</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Austria"</span> <span class="ot">=</span> <span class="st">"#d95f02"</span>,</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Denmark"</span> <span class="ot">=</span> <span class="st">"#7570b3"</span>,</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"UK"</span> <span class="ot">=</span> <span class="st">"#e7298a"</span>,</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Switzerland"</span> <span class="ot">=</span> <span class="st">"#66a61e"</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now we can save this plot to our computer using <code>ggsave()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"output/images/myplot.jpeg"</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> plot_woj,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">8</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">5</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">dpi =</span> <span class="dv">300</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The arguments in <code>ggsave()</code> mean the following:</p>
+<ul>
+<li><code>filename</code> specifies the name of the file and its format (for example <code>.jpeg</code>, <code>.png</code>, or <code>.pdf</code>). <strong>Important</strong>: We save the file in the subfolder “output/images”. This folder needs to exist already for this to work!</li>
+<li><code>plot</code> specifies which plot object should be saved</li>
+<li><code>width</code> and <code>height</code> define the size of the image (in inches)</li>
+<li><code>dpi</code> controls the resolution of the image (300 dpi is common for printed documents)</li>
+</ul>
+</section>
+<section id="take-aways" class="level2">
+<h2 class="anchored" data-anchor-id="take-aways">💡 Take-Aways</h2>
+<ul>
+<li><p><strong>Creating a graph</strong>: <code>ggplot()</code></p></li>
+<li><p><strong>Mapping data to visual elements</strong>: <code>aes(x, y, fill, color, etc.)</code></p></li>
+<li><p><strong>Choosing the type of graph</strong>: <code>geom_bar()</code>, <code>geom_line()</code>, <code>geom_point()</code>, <code>geom_boxplot()</code>, <code>geom_density()</code> (for example)</p></li>
+<li><p><strong>Splitting a graph into panels</strong>: <code>facet_wrap()</code></p></li>
+<li><p><strong>Adding titles and labels</strong>: <code>labs()</code></p></li>
+<li><p><strong>Adjusting scales (e.g., axis labels or colors)</strong>: <code>scale_*()</code> such as <code>scale_fill_manual()</code></p></li>
+<li><p><strong>Changing the visual style of a graph</strong>: <code>theme_minimal()</code>, <code>theme_classic()</code>, <code>theme_light()</code> (for example)</p></li>
+<li><p><strong>Saving graphs as image files</strong>: <code>ggsave()</code></p></li>
+</ul>
+</section>
+<section id="quiz" class="level2">
+<h2 class="anchored" data-anchor-id="quiz">🎲 Quiz</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb14" data-startfrom="531" data-source-offset="-1"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 530;"><span id="cb14-531"><a href="#cb14-531" aria-hidden="true" tabindex="-1"></a>round <span class="op">=</span> (n<span class="op">,</span> places) <span class="kw">=&gt;</span> {</span>
+<span id="cb14-532"><a href="#cb14-532" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>places) <span class="cf">return</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(n)<span class="op">;</span></span>
+<span id="cb14-533"><a href="#cb14-533" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> d <span class="op">=</span> <span class="dv">10</span> <span class="op">**</span> places<span class="op">;</span></span>
+<span id="cb14-534"><a href="#cb14-534" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(n <span class="op">*</span> d) <span class="op">/</span> d<span class="op">;</span></span>
+<span id="cb14-535"><a href="#cb14-535" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-536"><a href="#cb14-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-537"><a href="#cb14-537" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">textReplacementWithText</span>({ text<span class="op">,</span> placeholder<span class="op">,</span> correctText<span class="op">,</span> fontFamily <span class="op">=</span> <span class="st">"monospace"</span><span class="op">,</span> color <span class="op">=</span> <span class="st">"#000000"</span> }) {</span>
+<span id="cb14-538"><a href="#cb14-538" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> parts <span class="op">=</span> text<span class="op">.</span><span class="fu">split</span>(<span class="ss">/</span><span class="sc">\{\{</span><span class="ss">input</span><span class="sc">\}\}</span><span class="ss">/</span>)<span class="op">;</span> <span class="co">// Teilt den Text an den Eingabestellen</span></span>
+<span id="cb14-539"><a href="#cb14-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-540"><a href="#cb14-540" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-size: HUGE; margin-top: -40; margin-bottom: -40; margin-left: -50px; line-height: 1.8; font-family: </span><span class="sc">${</span>fontFamily<span class="sc">}</span><span class="vs">; color: </span><span class="sc">${</span>color<span class="sc">}</span><span class="vs">; white-space: pre-wrap; text-indent: 0; display: flex; align-items: baseline;"&gt;</span></span>
+<span id="cb14-541"><a href="#cb14-541" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="flex: 1;"&gt;</span></span>
+<span id="cb14-542"><a href="#cb14-542" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>parts<span class="op">.</span><span class="fu">map</span>((part<span class="op">,</span> index) <span class="kw">=&gt;</span></span>
+<span id="cb14-543"><a href="#cb14-543" aria-hidden="true" tabindex="-1"></a>        htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span><span class="sc">${</span>part<span class="sc">}${</span>index <span class="op">&lt;</span> parts<span class="op">.</span><span class="at">length</span> <span class="op">-</span> <span class="dv">1</span> <span class="op">?</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;span style="display: inline-flex; align-items: baseline;"&gt;</span></span>
+<span id="cb14-544"><a href="#cb14-544" aria-hidden="true" tabindex="-1"></a><span class="vs">          &lt;input </span></span>
+<span id="cb14-545"><a href="#cb14-545" aria-hidden="true" tabindex="-1"></a><span class="vs">            type="text"</span></span>
+<span id="cb14-546"><a href="#cb14-546" aria-hidden="true" tabindex="-1"></a><span class="vs">            placeholder="</span><span class="sc">${</span>placeholder<span class="sc">}</span><span class="vs">"</span></span>
+<span id="cb14-547"><a href="#cb14-547" aria-hidden="true" tabindex="-1"></a><span class="vs">            style="padding: 3px; font-size: HUGE; border: 1px solid #ccc; margin-left: 0px; border-radius: 4px; width: calc(</span><span class="sc">${</span>correctText<span class="op">.</span><span class="at">length</span><span class="sc">}</span><span class="vs">ch + 1em); font-family: </span><span class="sc">${</span>fontFamily<span class="sc">}</span><span class="vs">; color: </span><span class="sc">${</span>color<span class="sc">}</span><span class="vs">; text-align: right; box-sizing: border-box; margin-right: 0.2em;"</span></span>
+<span id="cb14-548"><a href="#cb14-548" aria-hidden="true" tabindex="-1"></a><span class="vs">            oninput=</span><span class="sc">${</span>(e) <span class="kw">=&gt;</span> {</span>
+<span id="cb14-549"><a href="#cb14-549" aria-hidden="true" tabindex="-1"></a>              <span class="kw">const</span> feedbackElement <span class="op">=</span> <span class="bu">root</span><span class="op">.</span><span class="fu">querySelector</span>(<span class="vs">`#feedback-final`</span>)<span class="op">;</span></span>
+<span id="cb14-550"><a href="#cb14-550" aria-hidden="true" tabindex="-1"></a>              <span class="kw">const</span> allInputsCorrect <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(<span class="bu">root</span><span class="op">.</span><span class="fu">querySelectorAll</span>(<span class="st">"input"</span>))<span class="op">.</span><span class="fu">every</span>((input) <span class="kw">=&gt;</span> input<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="fu">trim</span>() <span class="op">===</span> correctText<span class="op">.</span><span class="fu">trim</span>())<span class="op">;</span></span>
+<span id="cb14-551"><a href="#cb14-551" aria-hidden="true" tabindex="-1"></a>              <span class="cf">if</span> (allInputsCorrect) {</span>
+<span id="cb14-552"><a href="#cb14-552" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"✅"</span><span class="op">;</span></span>
+<span id="cb14-553"><a href="#cb14-553" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"green"</span><span class="op">;</span></span>
+<span id="cb14-554"><a href="#cb14-554" aria-hidden="true" tabindex="-1"></a>              } <span class="cf">else</span> {</span>
+<span id="cb14-555"><a href="#cb14-555" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"🔴"</span><span class="op">;</span></span>
+<span id="cb14-556"><a href="#cb14-556" aria-hidden="true" tabindex="-1"></a>                feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">;</span></span>
+<span id="cb14-557"><a href="#cb14-557" aria-hidden="true" tabindex="-1"></a>              }</span>
+<span id="cb14-558"><a href="#cb14-558" aria-hidden="true" tabindex="-1"></a>            }<span class="sc">}</span></span>
+<span id="cb14-559"><a href="#cb14-559" aria-hidden="true" tabindex="-1"></a><span class="vs">          /&gt;&lt;/span&gt;`</span> <span class="op">:</span> <span class="st">""</span><span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb14-560"><a href="#cb14-560" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb14-561"><a href="#cb14-561" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb14-562"><a href="#cb14-562" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;span id="feedback-final" style="font-weight: bold; font-size: HUGE; margin-left: 0.5em; color: inherit;"&gt;&lt;/span&gt;</span></span>
+<span id="cb14-563"><a href="#cb14-563" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb14-564"><a href="#cb14-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-565"><a href="#cb14-565" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb14-566"><a href="#cb14-566" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-567"><a href="#cb14-567" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-568"><a href="#cb14-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-569"><a href="#cb14-569" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-570"><a href="#cb14-570" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">textReplacementTask</span>({ placeholder<span class="op">,</span> correctText<span class="op">,</span> width <span class="op">=</span> <span class="st">"300px"</span><span class="op">,</span> fontFamily <span class="op">=</span> <span class="st">"monospace"</span><span class="op">,</span> color <span class="op">=</span> <span class="st">"black"</span> }) {</span>
+<span id="cb14-571"><a href="#cb14-571" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> enteredText <span class="op">=</span> <span class="st">""</span><span class="op">;</span> </span>
+<span id="cb14-572"><a href="#cb14-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-573"><a href="#cb14-573" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-size: 14px; line-height: 1.5; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb14-574"><a href="#cb14-574" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;h4&gt;Bitte ersetzen Sie den Text:&lt;/h4&gt;</span></span>
+<span id="cb14-575"><a href="#cb14-575" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;!-- Eingabefeld --&gt;</span></span>
+<span id="cb14-576"><a href="#cb14-576" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="display: flex; align-items: center;"&gt;</span></span>
+<span id="cb14-577"><a href="#cb14-577" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;input</span></span>
+<span id="cb14-578"><a href="#cb14-578" aria-hidden="true" tabindex="-1"></a><span class="vs">        type="text"</span></span>
+<span id="cb14-579"><a href="#cb14-579" aria-hidden="true" tabindex="-1"></a><span class="vs">        placeholder="</span><span class="sc">${</span>placeholder<span class="sc">}</span><span class="vs">"</span></span>
+<span id="cb14-580"><a href="#cb14-580" aria-hidden="true" tabindex="-1"></a><span class="vs">        style="padding: 5px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: </span><span class="sc">${</span>width<span class="sc">}</span><span class="vs">; font-family: </span><span class="sc">${</span>fontFamily<span class="sc">}</span><span class="vs">; color: </span><span class="sc">${</span>color<span class="sc">}</span><span class="vs">;"</span></span>
+<span id="cb14-581"><a href="#cb14-581" aria-hidden="true" tabindex="-1"></a><span class="vs">        onInput=</span><span class="sc">${</span>(e) <span class="kw">=&gt;</span> {</span>
+<span id="cb14-582"><a href="#cb14-582" aria-hidden="true" tabindex="-1"></a>          enteredText <span class="op">=</span> e<span class="op">.</span><span class="at">target</span><span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
+<span id="cb14-583"><a href="#cb14-583" aria-hidden="true" tabindex="-1"></a>          <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> enteredText<span class="op">;</span></span>
+<span id="cb14-584"><a href="#cb14-584" aria-hidden="true" tabindex="-1"></a>          <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb14-585"><a href="#cb14-585" aria-hidden="true" tabindex="-1"></a>          <span class="fu">updateFeedback</span>()<span class="op">;</span></span>
+<span id="cb14-586"><a href="#cb14-586" aria-hidden="true" tabindex="-1"></a>        }<span class="sc">}</span></span>
+<span id="cb14-587"><a href="#cb14-587" aria-hidden="true" tabindex="-1"></a><span class="vs">      /&gt;</span></span>
+<span id="cb14-588"><a href="#cb14-588" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;!-- Feedback --&gt;</span></span>
+<span id="cb14-589"><a href="#cb14-589" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div id="feedback" style="font-weight: bold; font-size: 14px; margin-left: 10px; text-align: left; white-space: nowrap; color: inherit;"&gt;&lt;/div&gt;</span></span>
+<span id="cb14-590"><a href="#cb14-590" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb14-591"><a href="#cb14-591" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb14-592"><a href="#cb14-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-593"><a href="#cb14-593" aria-hidden="true" tabindex="-1"></a><span class="co">// Funktion zur Aktualisierung des Feedbacks</span></span>
+<span id="cb14-594"><a href="#cb14-594" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">updateFeedback</span>() {</span>
+<span id="cb14-595"><a href="#cb14-595" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> feedbackElement <span class="op">=</span> <span class="bu">root</span><span class="op">.</span><span class="fu">querySelector</span>(<span class="st">"#feedback"</span>)<span class="op">;</span></span>
+<span id="cb14-596"><a href="#cb14-596" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (enteredText<span class="op">.</span><span class="fu">trim</span>() <span class="op">===</span> correctText<span class="op">.</span><span class="fu">trim</span>()) {</span>
+<span id="cb14-597"><a href="#cb14-597" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"✅"</span><span class="op">;</span></span>
+<span id="cb14-598"><a href="#cb14-598" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"green"</span><span class="op">;</span></span>
+<span id="cb14-599"><a href="#cb14-599" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (enteredText<span class="op">.</span><span class="fu">trim</span>() <span class="op">===</span> <span class="st">""</span>) {</span>
+<span id="cb14-600"><a href="#cb14-600" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">""</span><span class="op">;</span> </span>
+<span id="cb14-601"><a href="#cb14-601" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb14-602"><a href="#cb14-602" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">"🔴"</span><span class="op">;</span></span>
+<span id="cb14-603"><a href="#cb14-603" aria-hidden="true" tabindex="-1"></a>      feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">;</span></span>
+<span id="cb14-604"><a href="#cb14-604" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-605"><a href="#cb14-605" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-606"><a href="#cb14-606" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-607"><a href="#cb14-607" aria-hidden="true" tabindex="-1"></a>  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">null</span><span class="op">;</span> </span>
+<span id="cb14-608"><a href="#cb14-608" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb14-609"><a href="#cb14-609" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-610"><a href="#cb14-610" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-611"><a href="#cb14-611" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-612"><a href="#cb14-612" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">singleChoiceInput</span>({ options<span class="op">,</span> correctIndex }) {</span>
+<span id="cb14-613"><a href="#cb14-613" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> selectedAnswer <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb14-614"><a href="#cb14-614" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-615"><a href="#cb14-615" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-size: HUGE; line-height: 1.5; margin-bottom: 0px;"&gt;</span></span>
+<span id="cb14-616"><a href="#cb14-616" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;!-- Antworten --&gt;</span></span>
+<span id="cb14-617"><a href="#cb14-617" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="display: grid; row-gap: 12px;"&gt;</span></span>
+<span id="cb14-618"><a href="#cb14-618" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>options<span class="op">.</span><span class="fu">map</span>(</span>
+<span id="cb14-619"><a href="#cb14-619" aria-hidden="true" tabindex="-1"></a>        (option<span class="op">,</span> index) <span class="kw">=&gt;</span></span>
+<span id="cb14-620"><a href="#cb14-620" aria-hidden="true" tabindex="-1"></a>          htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="display: flex; align-items: center;"&gt;</span></span>
+<span id="cb14-621"><a href="#cb14-621" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;!-- Radiobutton und Option --&gt;</span></span>
+<span id="cb14-622"><a href="#cb14-622" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;label style="display: flex; align-items: center; padding-left: 4pt; font-weight: normal;"&gt;</span></span>
+<span id="cb14-623"><a href="#cb14-623" aria-hidden="true" tabindex="-1"></a><span class="vs">              &lt;input</span></span>
+<span id="cb14-624"><a href="#cb14-624" aria-hidden="true" tabindex="-1"></a><span class="vs">                type="radio"</span></span>
+<span id="cb14-625"><a href="#cb14-625" aria-hidden="true" tabindex="-1"></a><span class="vs">                name="singleChoice"</span></span>
+<span id="cb14-626"><a href="#cb14-626" aria-hidden="true" tabindex="-1"></a><span class="vs">                value=</span><span class="sc">${</span>index<span class="sc">}</span></span>
+<span id="cb14-627"><a href="#cb14-627" aria-hidden="true" tabindex="-1"></a><span class="vs">                style="margin-right: 10px;"</span></span>
+<span id="cb14-628"><a href="#cb14-628" aria-hidden="true" tabindex="-1"></a><span class="vs">                onChange=</span><span class="sc">${</span>() <span class="kw">=&gt;</span> {</span>
+<span id="cb14-629"><a href="#cb14-629" aria-hidden="true" tabindex="-1"></a>                  selectedAnswer <span class="op">=</span> index<span class="op">;</span></span>
+<span id="cb14-630"><a href="#cb14-630" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> selectedAnswer<span class="op">;</span></span>
+<span id="cb14-631"><a href="#cb14-631" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb14-632"><a href="#cb14-632" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">updateFeedback</span>()<span class="op">;</span></span>
+<span id="cb14-633"><a href="#cb14-633" aria-hidden="true" tabindex="-1"></a>                }<span class="sc">}</span></span>
+<span id="cb14-634"><a href="#cb14-634" aria-hidden="true" tabindex="-1"></a><span class="vs">              /&gt;</span></span>
+<span id="cb14-635"><a href="#cb14-635" aria-hidden="true" tabindex="-1"></a><span class="vs">              &lt;span&gt;</span><span class="sc">${</span>option<span class="sc">}</span><span class="vs">&lt;/span&gt;</span></span>
+<span id="cb14-636"><a href="#cb14-636" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;/label&gt;</span></span>
+<span id="cb14-637"><a href="#cb14-637" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;!-- Feedback --&gt;</span></span>
+<span id="cb14-638"><a href="#cb14-638" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;div id="feedback-</span><span class="sc">${</span>index<span class="sc">}</span><span class="vs">" style="font-weight: bold; font-size: 14px; margin-left: 10px; text-align: left; white-space: nowrap; color: inherit;"&gt;&lt;/div&gt;</span></span>
+<span id="cb14-639"><a href="#cb14-639" aria-hidden="true" tabindex="-1"></a><span class="vs">          &lt;/div&gt;`</span></span>
+<span id="cb14-640"><a href="#cb14-640" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb14-641"><a href="#cb14-641" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb14-642"><a href="#cb14-642" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb14-643"><a href="#cb14-643" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-644"><a href="#cb14-644" aria-hidden="true" tabindex="-1"></a><span class="co">// Funktion zur Aktualisierung des Feedbacks</span></span>
+<span id="cb14-645"><a href="#cb14-645" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">updateFeedback</span>() {</span>
+<span id="cb14-646"><a href="#cb14-646" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">forEach</span>((_<span class="op">,</span> index) <span class="kw">=&gt;</span> {</span>
+<span id="cb14-647"><a href="#cb14-647" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> feedbackElement <span class="op">=</span> <span class="bu">root</span><span class="op">.</span><span class="fu">querySelector</span>(<span class="vs">`#feedback-</span><span class="sc">${</span>index<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb14-648"><a href="#cb14-648" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (selectedAnswer <span class="op">===</span> index) {</span>
+<span id="cb14-649"><a href="#cb14-649" aria-hidden="true" tabindex="-1"></a>        feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span></span>
+<span id="cb14-650"><a href="#cb14-650" aria-hidden="true" tabindex="-1"></a>          index <span class="op">===</span> correctIndex <span class="op">?</span> <span class="st">"✅"</span> <span class="op">:</span> <span class="st">"🔴"</span><span class="op">;</span></span>
+<span id="cb14-651"><a href="#cb14-651" aria-hidden="true" tabindex="-1"></a>        feedbackElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">color</span> <span class="op">=</span> index <span class="op">===</span> correctIndex <span class="op">?</span> <span class="st">"green"</span> <span class="op">:</span> <span class="st">"red"</span><span class="op">;</span></span>
+<span id="cb14-652"><a href="#cb14-652" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb14-653"><a href="#cb14-653" aria-hidden="true" tabindex="-1"></a>        feedbackElement<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">""</span><span class="op">;</span> <span class="co">// Löscht Feedback für nicht ausgewählte Optionen</span></span>
+<span id="cb14-654"><a href="#cb14-654" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb14-655"><a href="#cb14-655" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb14-656"><a href="#cb14-656" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-657"><a href="#cb14-657" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-658"><a href="#cb14-658" aria-hidden="true" tabindex="-1"></a>  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb14-659"><a href="#cb14-659" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb14-660"><a href="#cb14-660" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-661"><a href="#cb14-661" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-662"><a href="#cb14-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-663"><a href="#cb14-663" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">quizInput</span>({ questions<span class="op">,</span> options}) {</span>
+<span id="cb14-664"><a href="#cb14-664" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> answers <span class="op">=</span> questions<span class="op">.</span><span class="fu">map</span>(() <span class="kw">=&gt;</span> <span class="kw">null</span>)<span class="op">;</span></span>
+<span id="cb14-665"><a href="#cb14-665" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div</span></span>
+<span id="cb14-666"><a href="#cb14-666" aria-hidden="true" tabindex="-1"></a><span class="vs">      style="</span></span>
+<span id="cb14-667"><a href="#cb14-667" aria-hidden="true" tabindex="-1"></a><span class="vs">        display: grid;</span></span>
+<span id="cb14-668"><a href="#cb14-668" aria-hidden="true" tabindex="-1"></a><span class="vs">        grid-template-columns: 10% 10% 70% 10%;"</span></span>
+<span id="cb14-669"><a href="#cb14-669" aria-hidden="true" tabindex="-1"></a><span class="vs">    &gt;</span></span>
+<span id="cb14-670"><a href="#cb14-670" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>options<span class="op">.</span><span class="fu">map</span>(</span>
+<span id="cb14-671"><a href="#cb14-671" aria-hidden="true" tabindex="-1"></a>        (opt) <span class="kw">=&gt;</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="font-weight: bold; font-size: HUGE"&gt;</span><span class="sc">${</span>opt<span class="sc">}</span><span class="vs">&lt;/div&gt;`</span></span>
+<span id="cb14-672"><a href="#cb14-672" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb14-673"><a href="#cb14-673" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div style="font-weight: bold"&gt;Statement&lt;/div&gt;</span></span>
+<span id="cb14-674"><a href="#cb14-674" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div style="font-weight: bold"&gt;&lt;/div&gt;</span></span>
+<span id="cb14-675"><a href="#cb14-675" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span><span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(questions<span class="op">.</span><span class="fu">entries</span>()<span class="op">,</span> ([i<span class="op">,</span> [question<span class="op">,</span> correct]]) <span class="kw">=&gt;</span></span>
+<span id="cb14-676"><a href="#cb14-676" aria-hidden="true" tabindex="-1"></a>        <span class="fu">quizInputRow</span>({</span>
+<span id="cb14-677"><a href="#cb14-677" aria-hidden="true" tabindex="-1"></a>          question<span class="op">,</span></span>
+<span id="cb14-678"><a href="#cb14-678" aria-hidden="true" tabindex="-1"></a>          options<span class="op">,</span></span>
+<span id="cb14-679"><a href="#cb14-679" aria-hidden="true" tabindex="-1"></a>          correct<span class="op">,</span></span>
+<span id="cb14-680"><a href="#cb14-680" aria-hidden="true" tabindex="-1"></a>          <span class="dt">onChange</span><span class="op">:</span> (newAnswer) <span class="kw">=&gt;</span> {</span>
+<span id="cb14-681"><a href="#cb14-681" aria-hidden="true" tabindex="-1"></a>            answers[i] <span class="op">=</span> newAnswer<span class="op">;</span></span>
+<span id="cb14-682"><a href="#cb14-682" aria-hidden="true" tabindex="-1"></a>            <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> answers<span class="op">;</span></span>
+<span id="cb14-683"><a href="#cb14-683" aria-hidden="true" tabindex="-1"></a>            <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb14-684"><a href="#cb14-684" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb14-685"><a href="#cb14-685" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb14-686"><a href="#cb14-686" aria-hidden="true" tabindex="-1"></a>      )<span class="sc">}</span></span>
+<span id="cb14-687"><a href="#cb14-687" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb14-688"><a href="#cb14-688" aria-hidden="true" tabindex="-1"></a>  <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> answers<span class="op">;</span></span>
+<span id="cb14-689"><a href="#cb14-689" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb14-690"><a href="#cb14-690" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-691"><a href="#cb14-691" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-692"><a href="#cb14-692" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">quizInputRow</span>({</span>
+<span id="cb14-693"><a href="#cb14-693" aria-hidden="true" tabindex="-1"></a>  question<span class="op">,</span></span>
+<span id="cb14-694"><a href="#cb14-694" aria-hidden="true" tabindex="-1"></a>  options<span class="op">,</span></span>
+<span id="cb14-695"><a href="#cb14-695" aria-hidden="true" tabindex="-1"></a>  correct<span class="op">,</span></span>
+<span id="cb14-696"><a href="#cb14-696" aria-hidden="true" tabindex="-1"></a>  onChange <span class="op">=</span> () <span class="kw">=&gt;</span> {}</span>
+<span id="cb14-697"><a href="#cb14-697" aria-hidden="true" tabindex="-1"></a>}) {</span>
+<span id="cb14-698"><a href="#cb14-698" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> <span class="bu">root</span> <span class="op">=</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div&gt;`</span><span class="op">;</span></span>
+<span id="cb14-699"><a href="#cb14-699" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-700"><a href="#cb14-700" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">setAnswer</span>(answer<span class="op">,</span> initial <span class="op">=</span> <span class="kw">false</span>) {</span>
+<span id="cb14-701"><a href="#cb14-701" aria-hidden="true" tabindex="-1"></a>    <span class="fu">morph</span>(</span>
+<span id="cb14-702"><a href="#cb14-702" aria-hidden="true" tabindex="-1"></a>      <span class="bu">root</span><span class="op">,</span></span>
+<span id="cb14-703"><a href="#cb14-703" aria-hidden="true" tabindex="-1"></a>      htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;div style="display: contents"&gt; </span></span>
+<span id="cb14-704"><a href="#cb14-704" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;form style="display: contents"&gt;</span></span>
+<span id="cb14-705"><a href="#cb14-705" aria-hidden="true" tabindex="-1"></a><span class="vs">        </span><span class="sc">${</span>options<span class="op">.</span><span class="fu">map</span>(</span>
+<span id="cb14-706"><a href="#cb14-706" aria-hidden="true" tabindex="-1"></a>          (opt) <span class="kw">=&gt;</span></span>
+<span id="cb14-707"><a href="#cb14-707" aria-hidden="true" tabindex="-1"></a>            htl<span class="op">.</span><span class="fu">html</span><span class="vs">`&lt;label&gt;&amp;emsp;&lt;/label&gt; </span></span>
+<span id="cb14-708"><a href="#cb14-708" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;input  </span></span>
+<span id="cb14-709"><a href="#cb14-709" aria-hidden="true" tabindex="-1"></a><span class="vs">              name=</span><span class="sc">${</span>question<span class="sc">}</span><span class="vs"> &amp;emsp;</span></span>
+<span id="cb14-710"><a href="#cb14-710" aria-hidden="true" tabindex="-1"></a><span class="vs">              type="radio"</span></span>
+<span id="cb14-711"><a href="#cb14-711" aria-hidden="true" tabindex="-1"></a><span class="vs">              value="</span><span class="sc">${</span>opt<span class="sc">}</span><span class="vs">"</span></span>
+<span id="cb14-712"><a href="#cb14-712" aria-hidden="true" tabindex="-1"></a><span class="vs">              checked=</span><span class="sc">${</span>opt <span class="op">===</span> answer<span class="sc">}</span></span>
+<span id="cb14-713"><a href="#cb14-713" aria-hidden="true" tabindex="-1"></a><span class="vs">              onChange=</span><span class="sc">${</span>() <span class="kw">=&gt;</span> <span class="fu">setAnswer</span>(opt)<span class="sc">}</span></span>
+<span id="cb14-714"><a href="#cb14-714" aria-hidden="true" tabindex="-1"></a><span class="vs">            &gt;</span></span>
+<span id="cb14-715"><a href="#cb14-715" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;/input&gt;`</span></span>
+<span id="cb14-716"><a href="#cb14-716" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">}</span></span>
+<span id="cb14-717"><a href="#cb14-717" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;/form&gt;</span></span>
+<span id="cb14-718"><a href="#cb14-718" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div&gt;</span><span class="sc">${</span>question<span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
+<span id="cb14-719"><a href="#cb14-719" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;div&gt; &amp;emsp; </span><span class="sc">${</span></span>
+<span id="cb14-720"><a href="#cb14-720" aria-hidden="true" tabindex="-1"></a>       answer <span class="op">===</span> <span class="kw">null</span> <span class="op">?</span> <span class="st">""</span> <span class="op">:</span> answer <span class="op">===</span> correct <span class="op">?</span> <span class="st">"✅"</span> <span class="op">:</span> <span class="st">"🔴"</span></span>
+<span id="cb14-721"><a href="#cb14-721" aria-hidden="true" tabindex="-1"></a>      <span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
+<span id="cb14-722"><a href="#cb14-722" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span></span>
+<span id="cb14-723"><a href="#cb14-723" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb14-724"><a href="#cb14-724" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-725"><a href="#cb14-725" aria-hidden="true" tabindex="-1"></a>    <span class="bu">root</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> answer<span class="op">;</span></span>
+<span id="cb14-726"><a href="#cb14-726" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>initial) {</span>
+<span id="cb14-727"><a href="#cb14-727" aria-hidden="true" tabindex="-1"></a>      <span class="bu">root</span><span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">"input"</span>))<span class="op">;</span></span>
+<span id="cb14-728"><a href="#cb14-728" aria-hidden="true" tabindex="-1"></a>      <span class="fu">onChange</span>(answer)<span class="op">;</span></span>
+<span id="cb14-729"><a href="#cb14-729" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-730"><a href="#cb14-730" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-731"><a href="#cb14-731" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-732"><a href="#cb14-732" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setAnswer</span>(<span class="kw">null</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb14-733"><a href="#cb14-733" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">root</span><span class="op">;</span></span>
+<span id="cb14-734"><a href="#cb14-734" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-735"><a href="#cb14-735" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-736"><a href="#cb14-736" aria-hidden="true" tabindex="-1"></a>morph <span class="op">=</span> <span class="pp">require</span>(<span class="st">"https://bundle.run/nanomorph@5.4.2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-5" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-6" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-7" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>🎲 Question 1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Which of the following statements about <code>ggplot</code> are correct?</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb15" data-startfrom="2" data-source-offset="-1"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 1;"><span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>MC_ggplot_1 <span class="op">=</span> [</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"ggplot() is used to start building a graph."</span><span class="op">,</span> <span class="st">"True"</span>]<span class="op">,</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"aes() defines how variables are mapped to visual elements."</span><span class="op">,</span> <span class="st">"True"</span>]<span class="op">,</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"A graph in ggplot2 can be built layer by layer."</span><span class="op">,</span> <span class="st">"True"</span>]<span class="op">,</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"Themes change how the graph looks, not the underlying data"</span><span class="op">,</span> <span class="st">"True"</span>]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>viewof answers_ggplot_1 <span class="op">=</span> <span class="fu">quizInput</span>({</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">questions</span><span class="op">:</span> MC_ggplot_1<span class="op">,</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">options</span><span class="op">:</span> [<span class="st">"True"</span><span class="op">,</span> <span class="st">"False"</span>]</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="more-tutorials-on-this" class="level2">
+<h2 class="anchored" data-anchor-id="more-tutorials-on-this">📚 More tutorials on this</h2>
+<p>You still have questions? The following tutorials &amp; papers can help you with that:</p>
+<ul>
+<li>Chang, W. (2018). <em>R Graphics Cookbook: Practical Recipes for Visualizing Data</em> (2nd ed.). <a href="https://r-graphics.org/">Link</a></li>
+<li>Wickham et al.&nbsp;(2021). <em>ggplot2: elegant graphics for data analysis.</em> Online, work-in-progress version of the 3rd edition. <a href="https://ggplot2-book.org/">Link</a></li>
+<li>Hehman, E., &amp; Xie, S. Y. (2021). Doing Better Data Visualization. <em>Advances in Methods and Practices in Psychological Science</em>. DOI: 10.1177/25152459211045334 <a href="https://doi.org/10.1177/25152459211045334">Link</a></li>
+</ul>
+</section>
+<section id="test-your-knowledge" class="level2">
+<h2 class="anchored" data-anchor-id="test-your-knowledge">📌 Test your knowledge</h2>
+<section id="task-1-easy" class="level3">
+<h3 class="anchored" data-anchor-id="task-1-easy">Task 1 (Easy🔥)</h3>
+<p>Use the existing command to create a graph. In this code, make the following changes:</p>
+<ul>
+<li>Change all density plots to <code>black</code> using “black”</li>
+<li>Change the title to “World of Journalism Study - Work Experience”</li>
+<li>Change the theme to <code>theme_bw()</code></li>
+</ul>
+<p><strong>Original code</strong>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data_woj <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove missing values</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(work_experience)) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the plot</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> work_experience, <span class="at">fill =</span> country)) <span class="sc">+</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>country) <span class="sc">+</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Journalists' Work Experience by Country"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Work Experience (Years)"</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="do">## manually define colors ##</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Germany"</span> <span class="ot">=</span> <span class="st">"#1b9e77"</span>,</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Austria"</span> <span class="ot">=</span> <span class="st">"#d95f02"</span>,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Denmark"</span> <span class="ot">=</span> <span class="st">"#7570b3"</span>,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"UK"</span> <span class="ot">=</span> <span class="st">"#e7298a"</span>,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Switzerland"</span> <span class="ot">=</span> <span class="st">"#66a61e"</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/task-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="task-2-medium" class="level3">
+<h3 class="anchored" data-anchor-id="task-2-medium">Task 2 (Medium🔥🔥)</h3>
+<p>From scratch: Create a bar plot that plots the number of respondents per country. It should look like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/task-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="task-3-hard" class="level3">
+<h3 class="anchored" data-anchor-id="task-3-hard">Task 3 (Hard🔥🔥🔥)</h3>
+<p>From scratch: Create a bar plot that plots average agreement to ethical statements (<code>ethics_1</code>, <code>ethics_2</code>, <code>ethics_3</code>, <code>ethics_4</code>, for example see below). Add the mean agreement for each statement on top of each bar. It should look like this:</p>
+<p>For this task, you are <strong>allowed</strong> to work with ChatGPT!</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="7-visuals_files/figure-html/task-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6Ilxucm91bmQgPSAobiwgcGxhY2VzKSA9PiB7XG4gIGlmICghcGxhY2VzKSByZXR1cm4gTWF0aC5yb3VuZChuKTtcbiAgY29uc3QgZCA9IDEwICoqIHBsYWNlcztcbiAgcmV0dXJuIE1hdGgucm91bmQobiAqIGQpIC8gZDtcbn1cblxuZnVuY3Rpb24gdGV4dFJlcGxhY2VtZW50V2l0aFRleHQoeyB0ZXh0LCBwbGFjZWhvbGRlciwgY29ycmVjdFRleHQsIGZvbnRGYW1pbHkgPSBcIm1vbm9zcGFjZVwiLCBjb2xvciA9IFwiIzAwMDAwMFwiIH0pIHtcbiAgY29uc3QgcGFydHMgPSB0ZXh0LnNwbGl0KC9cXHtcXHtpbnB1dFxcfVxcfS8pOyAvLyBUZWlsdCBkZW4gVGV4dCBhbiBkZW4gRWluZ2FiZXN0ZWxsZW5cblxuICBjb25zdCByb290ID0gaHRsLmh0bWxgPGRpdiBzdHlsZT1cImZvbnQtc2l6ZTogSFVHRTsgbWFyZ2luLXRvcDogLTQwOyBtYXJnaW4tYm90dG9tOiAtNDA7IG1hcmdpbi1sZWZ0OiAtNTBweDsgbGluZS1oZWlnaHQ6IDEuODsgZm9udC1mYW1pbHk6ICR7Zm9udEZhbWlseX07IGNvbG9yOiAke2NvbG9yfTsgd2hpdGUtc3BhY2U6IHByZS13cmFwOyB0ZXh0LWluZGVudDogMDsgZGlzcGxheTogZmxleDsgYWxpZ24taXRlbXM6IGJhc2VsaW5lO1wiPlxuICAgIDxkaXYgc3R5bGU9XCJmbGV4OiAxO1wiPlxuICAgICAgJHtwYXJ0cy5tYXAoKHBhcnQsIGluZGV4KSA9PlxuICAgICAgICBodGwuaHRtbGAke3BhcnR9JHtpbmRleCA8IHBhcnRzLmxlbmd0aCAtIDEgPyBodGwuaHRtbGA8c3BhbiBzdHlsZT1cImRpc3BsYXk6IGlubGluZS1mbGV4OyBhbGlnbi1pdGVtczogYmFzZWxpbmU7XCI+XG4gICAgICAgICAgPGlucHV0IFxuICAgICAgICAgICAgdHlwZT1cInRleHRcIlxuICAgICAgICAgICAgcGxhY2Vob2xkZXI9XCIke3BsYWNlaG9sZGVyfVwiXG4gICAgICAgICAgICBzdHlsZT1cInBhZGRpbmc6IDNweDsgZm9udC1zaXplOiBIVUdFOyBib3JkZXI6IDFweCBzb2xpZCAjY2NjOyBtYXJnaW4tbGVmdDogMHB4OyBib3JkZXItcmFkaXVzOiA0cHg7IHdpZHRoOiBjYWxjKCR7Y29ycmVjdFRleHQubGVuZ3RofWNoICsgMWVtKTsgZm9udC1mYW1pbHk6ICR7Zm9udEZhbWlseX07IGNvbG9yOiAke2NvbG9yfTsgdGV4dC1hbGlnbjogcmlnaHQ7IGJveC1zaXppbmc6IGJvcmRlci1ib3g7IG1hcmdpbi1yaWdodDogMC4yZW07XCJcbiAgICAgICAgICAgIG9uaW5wdXQ9JHsoZSkgPT4ge1xuICAgICAgICAgICAgICBjb25zdCBmZWVkYmFja0VsZW1lbnQgPSByb290LnF1ZXJ5U2VsZWN0b3IoYCNmZWVkYmFjay1maW5hbGApO1xuICAgICAgICAgICAgICBjb25zdCBhbGxJbnB1dHNDb3JyZWN0ID0gQXJyYXkuZnJvbShyb290LnF1ZXJ5U2VsZWN0b3JBbGwoXCJpbnB1dFwiKSkuZXZlcnkoKGlucHV0KSA9PiBpbnB1dC52YWx1ZS50cmltKCkgPT09IGNvcnJlY3RUZXh0LnRyaW0oKSk7XG4gICAgICAgICAgICAgIGlmIChhbGxJbnB1dHNDb3JyZWN0KSB7XG4gICAgICAgICAgICAgICAgZmVlZGJhY2tFbGVtZW50LnRleHRDb250ZW50ID0gXCLinIVcIjtcbiAgICAgICAgICAgICAgICBmZWVkYmFja0VsZW1lbnQuc3R5bGUuY29sb3IgPSBcImdyZWVuXCI7XG4gICAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgZmVlZGJhY2tFbGVtZW50LnRleHRDb250ZW50ID0gXCLwn5S0XCI7XG4gICAgICAgICAgICAgICAgZmVlZGJhY2tFbGVtZW50LnN0eWxlLmNvbG9yID0gXCJyZWRcIjtcbiAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgfX1cbiAgICAgICAgICAvPjwvc3Bhbj5gIDogXCJcIn1gXG4gICAgICApfVxuICAgIDwvZGl2PlxuICAgIDxzcGFuIGlkPVwiZmVlZGJhY2stZmluYWxcIiBzdHlsZT1cImZvbnQtd2VpZ2h0OiBib2xkOyBmb250LXNpemU6IEhVR0U7IG1hcmdpbi1sZWZ0OiAwLjVlbTsgY29sb3I6IGluaGVyaXQ7XCI+PC9zcGFuPlxuICA8L2Rpdj5gO1xuXG4gIHJldHVybiByb290O1xufVxuXG5cblxuZnVuY3Rpb24gdGV4dFJlcGxhY2VtZW50VGFzayh7IHBsYWNlaG9sZGVyLCBjb3JyZWN0VGV4dCwgd2lkdGggPSBcIjMwMHB4XCIsIGZvbnRGYW1pbHkgPSBcIm1vbm9zcGFjZVwiLCBjb2xvciA9IFwiYmxhY2tcIiB9KSB7XG4gIGxldCBlbnRlcmVkVGV4dCA9IFwiXCI7IFxuXG4gIGNvbnN0IHJvb3QgPSBodGwuaHRtbGA8ZGl2IHN0eWxlPVwiZm9udC1zaXplOiAxNHB4OyBsaW5lLWhlaWdodDogMS41OyBtYXJnaW4tYm90dG9tOiAyMHB4O1wiPlxuICAgIDxoND5CaXR0ZSBlcnNldHplbiBTaWUgZGVuIFRleHQ6PC9oND5cbiAgICA8IS0tIEVpbmdhYmVmZWxkIC0tPlxuICAgIDxkaXYgc3R5bGU9XCJkaXNwbGF5OiBmbGV4OyBhbGlnbi1pdGVtczogY2VudGVyO1wiPlxuICAgICAgPGlucHV0XG4gICAgICAgIHR5cGU9XCJ0ZXh0XCJcbiAgICAgICAgcGxhY2Vob2xkZXI9XCIke3BsYWNlaG9sZGVyfVwiXG4gICAgICAgIHN0eWxlPVwicGFkZGluZzogNXB4OyBmb250LXNpemU6IDE0cHg7IGJvcmRlcjogMXB4IHNvbGlkICNjY2M7IGJvcmRlci1yYWRpdXM6IDRweDsgd2lkdGg6ICR7d2lkdGh9OyBmb250LWZhbWlseTogJHtmb250RmFtaWx5fTsgY29sb3I6ICR7Y29sb3J9O1wiXG4gICAgICAgIG9uSW5wdXQ9JHsoZSkgPT4ge1xuICAgICAgICAgIGVudGVyZWRUZXh0ID0gZS50YXJnZXQudmFsdWU7XG4gICAgICAgICAgcm9vdC52YWx1ZSA9IGVudGVyZWRUZXh0O1xuICAgICAgICAgIHJvb3QuZGlzcGF0Y2hFdmVudChuZXcgQ3VzdG9tRXZlbnQoXCJpbnB1dFwiKSk7XG4gICAgICAgICAgdXBkYXRlRmVlZGJhY2soKTtcbiAgICAgICAgfX1cbiAgICAgIC8+XG4gICAgICA8IS0tIEZlZWRiYWNrIC0tPlxuICAgICAgPGRpdiBpZD1cImZlZWRiYWNrXCIgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZDsgZm9udC1zaXplOiAxNHB4OyBtYXJnaW4tbGVmdDogMTBweDsgdGV4dC1hbGlnbjogbGVmdDsgd2hpdGUtc3BhY2U6IG5vd3JhcDsgY29sb3I6IGluaGVyaXQ7XCI+PC9kaXY+XG4gICAgPC9kaXY+XG4gIDwvZGl2PmA7XG5cbi8vIEZ1bmt0aW9uIHp1ciBBa3R1YWxpc2llcnVuZyBkZXMgRmVlZGJhY2tzXG4gIGZ1bmN0aW9uIHVwZGF0ZUZlZWRiYWNrKCkge1xuICAgIGNvbnN0IGZlZWRiYWNrRWxlbWVudCA9IHJvb3QucXVlcnlTZWxlY3RvcihcIiNmZWVkYmFja1wiKTtcbiAgICBpZiAoZW50ZXJlZFRleHQudHJpbSgpID09PSBjb3JyZWN0VGV4dC50cmltKCkpIHtcbiAgICAgIGZlZWRiYWNrRWxlbWVudC50ZXh0Q29udGVudCA9IFwi4pyFXCI7XG4gICAgICBmZWVkYmFja0VsZW1lbnQuc3R5bGUuY29sb3IgPSBcImdyZWVuXCI7XG4gICAgfSBlbHNlIGlmIChlbnRlcmVkVGV4dC50cmltKCkgPT09IFwiXCIpIHtcbiAgICAgIGZlZWRiYWNrRWxlbWVudC50ZXh0Q29udGVudCA9IFwiXCI7IFxuICAgIH0gZWxzZSB7XG4gICAgICBmZWVkYmFja0VsZW1lbnQudGV4dENvbnRlbnQgPSBcIvCflLRcIjtcbiAgICAgIGZlZWRiYWNrRWxlbWVudC5zdHlsZS5jb2xvciA9IFwicmVkXCI7XG4gICAgfVxuICB9XG5cbiAgcm9vdC52YWx1ZSA9IG51bGw7IFxuICByZXR1cm4gcm9vdDtcbn1cblxuXG5mdW5jdGlvbiBzaW5nbGVDaG9pY2VJbnB1dCh7IG9wdGlvbnMsIGNvcnJlY3RJbmRleCB9KSB7XG4gIGxldCBzZWxlY3RlZEFuc3dlciA9IG51bGw7XG5cbiAgY29uc3Qgcm9vdCA9IGh0bC5odG1sYDxkaXYgc3R5bGU9XCJmb250LXNpemU6IEhVR0U7IGxpbmUtaGVpZ2h0OiAxLjU7IG1hcmdpbi1ib3R0b206IDBweDtcIj5cbiAgICA8IS0tIEFudHdvcnRlbiAtLT5cbiAgICA8ZGl2IHN0eWxlPVwiZGlzcGxheTogZ3JpZDsgcm93LWdhcDogMTJweDtcIj5cbiAgICAgICR7b3B0aW9ucy5tYXAoXG4gICAgICAgIChvcHRpb24sIGluZGV4KSA9PlxuICAgICAgICAgIGh0bC5odG1sYDxkaXYgc3R5bGU9XCJkaXNwbGF5OiBmbGV4OyBhbGlnbi1pdGVtczogY2VudGVyO1wiPlxuICAgICAgICAgICAgPCEtLSBSYWRpb2J1dHRvbiB1bmQgT3B0aW9uIC0tPlxuICAgICAgICAgICAgPGxhYmVsIHN0eWxlPVwiZGlzcGxheTogZmxleDsgYWxpZ24taXRlbXM6IGNlbnRlcjsgcGFkZGluZy1sZWZ0OiA0cHQ7IGZvbnQtd2VpZ2h0OiBub3JtYWw7XCI+XG4gICAgICAgICAgICAgIDxpbnB1dFxuICAgICAgICAgICAgICAgIHR5cGU9XCJyYWRpb1wiXG4gICAgICAgICAgICAgICAgbmFtZT1cInNpbmdsZUNob2ljZVwiXG4gICAgICAgICAgICAgICAgdmFsdWU9JHtpbmRleH1cbiAgICAgICAgICAgICAgICBzdHlsZT1cIm1hcmdpbi1yaWdodDogMTBweDtcIlxuICAgICAgICAgICAgICAgIG9uQ2hhbmdlPSR7KCkgPT4ge1xuICAgICAgICAgICAgICAgICAgc2VsZWN0ZWRBbnN3ZXIgPSBpbmRleDtcbiAgICAgICAgICAgICAgICAgIHJvb3QudmFsdWUgPSBzZWxlY3RlZEFuc3dlcjtcbiAgICAgICAgICAgICAgICAgIHJvb3QuZGlzcGF0Y2hFdmVudChuZXcgQ3VzdG9tRXZlbnQoXCJpbnB1dFwiKSk7XG4gICAgICAgICAgICAgICAgICB1cGRhdGVGZWVkYmFjaygpO1xuICAgICAgICAgICAgICAgIH19XG4gICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgIDxzcGFuPiR7b3B0aW9ufTwvc3Bhbj5cbiAgICAgICAgICAgIDwvbGFiZWw+XG4gICAgICAgICAgICA8IS0tIEZlZWRiYWNrIC0tPlxuICAgICAgICAgICAgPGRpdiBpZD1cImZlZWRiYWNrLSR7aW5kZXh9XCIgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZDsgZm9udC1zaXplOiAxNHB4OyBtYXJnaW4tbGVmdDogMTBweDsgdGV4dC1hbGlnbjogbGVmdDsgd2hpdGUtc3BhY2U6IG5vd3JhcDsgY29sb3I6IGluaGVyaXQ7XCI+PC9kaXY+XG4gICAgICAgICAgPC9kaXY+YFxuICAgICAgKX1cbiAgICA8L2Rpdj5cbiAgPC9kaXY+YDtcblxuLy8gRnVua3Rpb24genVyIEFrdHVhbGlzaWVydW5nIGRlcyBGZWVkYmFja3NcbiAgZnVuY3Rpb24gdXBkYXRlRmVlZGJhY2soKSB7XG4gICAgb3B0aW9ucy5mb3JFYWNoKChfLCBpbmRleCkgPT4ge1xuICAgICAgY29uc3QgZmVlZGJhY2tFbGVtZW50ID0gcm9vdC5xdWVyeVNlbGVjdG9yKGAjZmVlZGJhY2stJHtpbmRleH1gKTtcbiAgICAgIGlmIChzZWxlY3RlZEFuc3dlciA9PT0gaW5kZXgpIHtcbiAgICAgICAgZmVlZGJhY2tFbGVtZW50LnRleHRDb250ZW50ID1cbiAgICAgICAgICBpbmRleCA9PT0gY29ycmVjdEluZGV4ID8gXCLinIVcIiA6IFwi8J+UtFwiO1xuICAgICAgICBmZWVkYmFja0VsZW1lbnQuc3R5bGUuY29sb3IgPSBpbmRleCA9PT0gY29ycmVjdEluZGV4ID8gXCJncmVlblwiIDogXCJyZWRcIjtcbiAgICAgIH0gZWxzZSB7XG4gICAgICAgIGZlZWRiYWNrRWxlbWVudC50ZXh0Q29udGVudCA9IFwiXCI7IC8vIEzDtnNjaHQgRmVlZGJhY2sgZsO8ciBuaWNodCBhdXNnZXfDpGhsdGUgT3B0aW9uZW5cbiAgICAgIH1cbiAgICB9KTtcbiAgfVxuXG4gIHJvb3QudmFsdWUgPSBudWxsO1xuICByZXR1cm4gcm9vdDtcbn1cblxuXG5mdW5jdGlvbiBxdWl6SW5wdXQoeyBxdWVzdGlvbnMsIG9wdGlvbnN9KSB7XG4gIGxldCBhbnN3ZXJzID0gcXVlc3Rpb25zLm1hcCgoKSA9PiBudWxsKTtcbiAgbGV0IHJvb3QgPSBodGwuaHRtbGA8ZGl2XG4gICAgICBzdHlsZT1cIlxuICAgICAgICBkaXNwbGF5OiBncmlkO1xuICAgICAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDEwJSAxMCUgNzAlIDEwJTtcIlxuICAgID5cbiAgICAgICR7b3B0aW9ucy5tYXAoXG4gICAgICAgIChvcHQpID0+IGh0bC5odG1sYDxkaXYgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZDsgZm9udC1zaXplOiBIVUdFXCI+JHtvcHR9PC9kaXY+YFxuICAgICAgKX1cbiAgICAgIDxkaXYgc3R5bGU9XCJmb250LXdlaWdodDogYm9sZFwiPlN0YXRlbWVudDwvZGl2PlxuICAgICAgPGRpdiBzdHlsZT1cImZvbnQtd2VpZ2h0OiBib2xkXCI+PC9kaXY+XG4gICAgICAke0FycmF5LmZyb20ocXVlc3Rpb25zLmVudHJpZXMoKSwgKFtpLCBbcXVlc3Rpb24sIGNvcnJlY3RdXSkgPT5cbiAgICAgICAgcXVpeklucHV0Um93KHtcbiAgICAgICAgICBxdWVzdGlvbixcbiAgICAgICAgICBvcHRpb25zLFxuICAgICAgICAgIGNvcnJlY3QsXG4gICAgICAgICAgb25DaGFuZ2U6IChuZXdBbnN3ZXIpID0+IHtcbiAgICAgICAgICAgIGFuc3dlcnNbaV0gPSBuZXdBbnN3ZXI7XG4gICAgICAgICAgICByb290LnZhbHVlID0gYW5zd2VycztcbiAgICAgICAgICAgIHJvb3QuZGlzcGF0Y2hFdmVudChuZXcgQ3VzdG9tRXZlbnQoXCJpbnB1dFwiKSk7XG4gICAgICAgICAgfVxuICAgICAgICB9KVxuICAgICAgKX1cbiAgICA8L2Rpdj5gO1xuICByb290LnZhbHVlID0gYW5zd2VycztcbiAgcmV0dXJuIHJvb3Q7XG59XG5cbmZ1bmN0aW9uIHF1aXpJbnB1dFJvdyh7XG4gIHF1ZXN0aW9uLFxuICBvcHRpb25zLFxuICBjb3JyZWN0LFxuICBvbkNoYW5nZSA9ICgpID0+IHt9XG59KSB7XG4gIGxldCByb290ID0gaHRsLmh0bWxgPGRpdj5gO1xuXG4gIGZ1bmN0aW9uIHNldEFuc3dlcihhbnN3ZXIsIGluaXRpYWwgPSBmYWxzZSkge1xuICAgIG1vcnBoKFxuICAgICAgcm9vdCxcbiAgICAgIGh0bC5odG1sYDxkaXYgc3R5bGU9XCJkaXNwbGF5OiBjb250ZW50c1wiPiBcbiAgICAgIDxmb3JtIHN0eWxlPVwiZGlzcGxheTogY29udGVudHNcIj5cbiAgICAgICAgJHtvcHRpb25zLm1hcChcbiAgICAgICAgICAob3B0KSA9PlxuICAgICAgICAgICAgaHRsLmh0bWxgPGxhYmVsPiZlbXNwOzwvbGFiZWw+IFxuICAgICAgICAgICAgPGlucHV0ICBcbiAgICAgICAgICAgICAgbmFtZT0ke3F1ZXN0aW9ufSAmZW1zcDtcbiAgICAgICAgICAgICAgdHlwZT1cInJhZGlvXCJcbiAgICAgICAgICAgICAgdmFsdWU9XCIke29wdH1cIlxuICAgICAgICAgICAgICBjaGVja2VkPSR7b3B0ID09PSBhbnN3ZXJ9XG4gICAgICAgICAgICAgIG9uQ2hhbmdlPSR7KCkgPT4gc2V0QW5zd2VyKG9wdCl9XG4gICAgICAgICAgICA+XG4gICAgICAgICAgICA8L2lucHV0PmBcbiAgICAgICAgKX1cbiAgICAgIDwvZm9ybT5cbiAgICAgIDxkaXY+JHtxdWVzdGlvbn08L2Rpdj5cbiAgICAgIDxkaXY+ICZlbXNwOyAke1xuICAgICAgIGFuc3dlciA9PT0gbnVsbCA/IFwiXCIgOiBhbnN3ZXIgPT09IGNvcnJlY3QgPyBcIuKchVwiIDogXCLwn5S0XCJcbiAgICAgIH08L2Rpdj5cbiAgICA8L2Rpdj5gXG4gICAgKTtcblxuICAgIHJvb3QudmFsdWUgPSBhbnN3ZXI7XG4gICAgaWYgKCFpbml0aWFsKSB7XG4gICAgICByb290LmRpc3BhdGNoRXZlbnQobmV3IEN1c3RvbUV2ZW50KFwiaW5wdXRcIikpO1xuICAgICAgb25DaGFuZ2UoYW5zd2VyKTtcbiAgICB9XG4gIH1cblxuICBzZXRBbnN3ZXIobnVsbCwgdHJ1ZSk7XG4gIHJldHVybiByb290O1xufVxuXG5tb3JwaCA9IHJlcXVpcmUoXCJodHRwczovL2J1bmRsZS5ydW4vbmFub21vcnBoQDUuNC4yXCIpXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTIiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJcbk1DX2dncGxvdF8xID0gW1xuICBbXCJnZ3Bsb3QoKSBpcyB1c2VkIHRvIHN0YXJ0IGJ1aWxkaW5nIGEgZ3JhcGguXCIsIFwiVHJ1ZVwiXSxcbiAgW1wiYWVzKCkgZGVmaW5lcyBob3cgdmFyaWFibGVzIGFyZSBtYXBwZWQgdG8gdmlzdWFsIGVsZW1lbnRzLlwiLCBcIlRydWVcIl0sXG4gIFtcIkEgZ3JhcGggaW4gZ2dwbG90MiBjYW4gYmUgYnVpbHQgbGF5ZXIgYnkgbGF5ZXIuXCIsIFwiVHJ1ZVwiXSxcbiAgW1wiVGhlbWVzIGNoYW5nZSBob3cgdGhlIGdyYXBoIGxvb2tzLCBub3QgdGhlIHVuZGVybHlpbmcgZGF0YVwiLCBcIlRydWVcIl1cbl1cblxudmlld29mIGFuc3dlcnNfZ2dwbG90XzEgPSBxdWl6SW5wdXQoe1xuICBxdWVzdGlvbnM6IE1DX2dncGxvdF8xLFxuICBvcHRpb25zOiBbXCJUcnVlXCIsIFwiRmFsc2VcIl1cbn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ2Fuc3dlcnNfZ2dwbG90XzEnKSJ9XX0=
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../..";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./6-data-types.html" class="pagination-link" aria-label="6 Data and object types">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">6 Data and object types</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./8-data-management.html" class="pagination-link" aria-label="8 Data management in R">
+        <span class="nav-page-text"><span class="chapter-title">8 Data management in R</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>University of Klagenfurt | Built with <a href="https://quarto.org/">Quarto</a> | <a href="./imprint.html">Imprint</a> | Shared under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC license</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
